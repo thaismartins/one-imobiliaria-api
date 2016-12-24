@@ -10,7 +10,6 @@ config = require './config'
 path = require 'path'
 cors = require 'cors'
 response = require './services/response'
-chat = require './services/websocket'
 
 app = express()
 app.set 'port', config.port
