@@ -1,4 +1,4 @@
-var City, Group, Promise, Segment, User, express, router, segments, states, utils;
+var City, Group, Promise, User, express, router, states, utils;
 
 express = require('express');
 
@@ -6,15 +6,11 @@ router = express.Router();
 
 states = require('../configs/states');
 
-segments = require('../configs/segments');
-
 utils = require('../services/utils');
 
 Promise = require('q');
 
 City = require('../models/City');
-
-Segment = require('../models/Segment');
 
 User = require('../models/User');
 

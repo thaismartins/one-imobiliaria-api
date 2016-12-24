@@ -1,11 +1,9 @@
 express = require 'express'
 router = express.Router()
 states = require('../configs/states')
-segments = require('../configs/segments')
 utils = require '../services/utils'
 Promise = require('q')
 City = require '../models/City'
-Segment = require '../models/Segment'
 User = require '../models/User'
 Group = require '../models/UserGroup'
 
