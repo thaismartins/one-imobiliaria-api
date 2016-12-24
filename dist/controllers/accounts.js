@@ -214,12 +214,12 @@ router.post('/', auth.isAuthenticated, function(req, res) {
       if (groupFound) {
         user.group = groupFound._id;
       }
-      return user.save(function(err) {
+      return user.save(function(err, userSaved) {
         if (err) {
           return res["with"](res.type.dbError, err);
         }
-        userFound.token = user.generateToken();
-        return userFound.populate('group', function(err, userSaved) {
+        userSaved.token = userSaved.generateToken();
+        return userSaved.populate('group', function(err, userSaved) {
           var emailHtml, emailbodyfilepath, mailOptions, transporter;
           transporter = nodemailer.createTransport({
             host: 'smtp.googlemail.com',
@@ -233,12 +233,12 @@ router.post('/', auth.isAuthenticated, function(req, res) {
           });
           emailbodyfilepath = __dirname + '/../public/emails/account.html';
           emailHtml = fs.readFileSync(emailbodyfilepath, 'utf8');
-          emailHtml = emailHtml.replace('__PASSWORD__', userFound.password);
-          emailHtml = emailHtml.replace('__NAME__', userFound.name);
-          emailHtml = emailHtml.replace('__EMAIL__', userFound.email);
+          emailHtml = emailHtml.replace('__PASSWORD__', userSaved.password);
+          emailHtml = emailHtml.replace('__NAME__', userSaved.name);
+          emailHtml = emailHtml.replace('__EMAIL__', userSaved.email);
           mailOptions = {
             from: '"One Consultoria Imobiliária" <one@one.com.br>',
-            to: userFound.email,
+            to: userSaved.email,
             subject: 'Seu novo usuário em nosso sistema',
             html: emailHtml.toString()
           };

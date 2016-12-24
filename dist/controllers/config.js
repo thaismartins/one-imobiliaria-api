@@ -103,7 +103,7 @@ router.post('/users', function(req, res) {
   var user;
   user = new User();
   user.name = 'Administrador';
-  user.email = 'admin@one.com';
+  user.email = 'admin@one';
   user.username = 'admin@one';
   user.password = '!one@159';
   user.created = Date.now();

@@ -131,10 +131,10 @@ router.post '/', auth.isAuthenticated, (req, res) ->
     Group.findOne {'type': type}, (err, groupFound) ->
         return res.with(res.type.dbError, err) if err
         user.group = groupFound._id if groupFound
-        user.save (err) ->
+        user.save (err, userSaved) ->
           return res.with(res.type.dbError, err) if err
-          userFound.token = user.generateToken()
-          userFound.populate 'group', (err, userSaved) ->
+          userSaved.token = userSaved.generateToken()
+          userSaved.populate 'group', (err, userSaved) ->
             transporter = nodemailer.createTransport({
               host: 'smtp.googlemail.com'
               port: 465
@@ -155,13 +155,13 @@ router.post '/', auth.isAuthenticated, (req, res) ->
             emailbodyfilepath = __dirname + '/../public/emails/account.html'
             emailHtml = fs.readFileSync(emailbodyfilepath,'utf8')
 
-            emailHtml = emailHtml.replace('__PASSWORD__', userFound.password)
-            emailHtml = emailHtml.replace('__NAME__', userFound.name)
-            emailHtml = emailHtml.replace('__EMAIL__', userFound.email)
+            emailHtml = emailHtml.replace('__PASSWORD__', userSaved.password)
+            emailHtml = emailHtml.replace('__NAME__', userSaved.name)
+            emailHtml = emailHtml.replace('__EMAIL__', userSaved.email)
 
             mailOptions =
               from: '"One Consultoria Imobiliária" <one@one.com.br>'
-              to: userFound.email
+              to: userSaved.email
               subject: 'Seu novo usuário em nosso sistema'
               html: emailHtml.toString()
 
