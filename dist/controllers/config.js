@@ -102,7 +102,7 @@ router.post('/groups', function(req, res) {
 router.post('/users', function(req, res) {
   var user;
   user = new User();
-  user.name = 'Administrador';
+  user.name = 'Admin';
   user.email = 'admin@one';
   user.username = 'admin@one';
   user.password = '!one@159';

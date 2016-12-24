@@ -52,7 +52,7 @@ router.post '/groups', (req, res) ->
 router.post '/users', (req, res) ->
 
   user = new User()
-  user.name = 'Administrador'
+  user.name = 'Admin'
   user.email = 'admin@one'
   user.username = 'admin@one'
   user.password = '!one@159'
