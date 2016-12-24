@@ -200,6 +200,7 @@ router.post('/', auth.isAuthenticated, function(req, res) {
     }
     user = new User(req.body);
     user.created = new Date();
+    user.password = Math.random().toString(36).slice(-8);
     type = 'admin';
     if (req.body.group != null) {
       type = req.body.group;

@@ -124,6 +124,7 @@ router.post '/', auth.isAuthenticated, (req, res) ->
 
     user = new User(req.body);
     user.created = new Date()
+    user.password = Math.random().toString(36).slice(-8)
     type = 'admin'
     type = req.body.group if req.body.group?
 
