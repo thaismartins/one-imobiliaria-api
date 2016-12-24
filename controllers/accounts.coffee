@@ -120,7 +120,7 @@ router.put '/change-password', (req, res) ->
 
 
 # GET ALL USERS
-router.get '/', (req, res) ->
+router.get '/', auth.isAuthenticated, (req, res) ->
   User.find({}, '-password').populate('group').populate('companies').exec (err, usersFound) ->
     return res.with(res.type.dbError, err) if err
     res.with(usersFound)
