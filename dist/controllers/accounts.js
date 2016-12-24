@@ -1,4 +1,4 @@
-var Company, Group, User, auth, config, express, fs, jwt, multer, nodemailer, router, upload, uploadPath, utils;
+var Group, User, auth, config, express, fs, multer, nodemailer, router, upload, uploadPath;
 
 express = require('express');
 
@@ -9,10 +9,6 @@ auth = require('../services/auth');
 User = require('../models/User');
 
 Group = require('../models/UserGroup');
-
-Company = require('../models/Company');
-
-utils = require('../services/utils');
 
 fs = require('fs');
 
@@ -25,8 +21,6 @@ upload = multer({
 });
 
 nodemailer = require('nodemailer');
-
-jwt = require('jsonwebtoken');
 
 config = require('../config');
 
@@ -308,21 +302,7 @@ router["delete"]('/:id', auth.isAuthenticated, function(req, res) {
     if (err) {
       return res["with"](res.type.dbError, err);
     }
-    return Company.findOneAndRemove({
-      user: req.params.id
-    }, function(err, companyFounded) {
-      if (err) {
-        return res["with"](res.type.dbError, err);
-      }
-      return Coupon.findOneAndRemove({
-        'company': companyFounded._id
-      }, function(err) {
-        if (err) {
-          return res["with"](res.type.dbError, err);
-        }
-        return res["with"](res.type.deleteSuccess);
-      });
-    });
+    return res["with"](res.type.deleteSuccess);
   });
 });
 
