@@ -56,7 +56,7 @@ router.post('/auth', function(req, res) {
 });
 
 router.get('/', auth.isAuthenticated, function(req, res) {
-  return User.find({}, '-password').populate('group').populate('companies').exec(function(err, usersFound) {
+  return User.find({}, '-password').populate('group').exec(function(err, usersFound) {
     if (err) {
       return res["with"](res.type.dbError, err);
     }
@@ -67,7 +67,7 @@ router.get('/', auth.isAuthenticated, function(req, res) {
 router.get('/:id', auth.isAuthenticated, function(req, res) {
   return User.findOne({
     '_id': req.params.id
-  }, '-password').populate('group').populate('companies').exec(function(err, userFound) {
+  }, '-password').populate('group').exec(function(err, userFound) {
     if (err) {
       return res["with"](res.type.dbError, err);
     }
