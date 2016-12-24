@@ -29,13 +29,13 @@ router.post '/auth', (req, res) ->
 
 # GET ALL USERS
 router.get '/', auth.isAuthenticated, (req, res) ->
-  User.find({}, '-password').populate('group').populate('companies').exec (err, usersFound) ->
+  User.find({}, '-password').populate('group').exec (err, usersFound) ->
     return res.with(res.type.dbError, err) if err
     res.with(usersFound)
 
 # GET SPECIFIC USER
 router.get '/:id', auth.isAuthenticated, (req, res) ->
-  User.findOne({'_id': req.params.id}, '-password').populate('group').populate('companies').exec (err, userFound) ->
+  User.findOne({'_id': req.params.id}, '-password').populate('group').exec (err, userFound) ->
     return res.with(res.type.dbError, err) if err
     return res.with(userFound) if userFound
     res.with(res.type.itemNotFound)
@@ -68,13 +68,6 @@ router.post '/', auth.isAuthenticated, (req, res) ->
                 user: 'sistemas@doisoitosete.com'
                 pass: '@c3ss0287'
             })
-
-#            transporter = nodemailer.createTransport smtpTransport(
-#              service: "gmail"
-#              auth:
-#                user: "thaismartinsweb@gmail.com"
-#                pass: "xxx"
-#            )
 
             emailbodyfilepath = __dirname + '/../public/emails/account.html'
             emailHtml = fs.readFileSync(emailbodyfilepath,'utf8')
