@@ -3,14 +3,11 @@ router = express.Router()
 auth = require '../services/auth'
 User = require '../models/User'
 Group = require '../models/UserGroup'
-Company = require '../models/Company'
-utils = require '../services/utils'
 fs = require 'fs'
 multer = require 'multer'
 uploadPath = './public/uploads/users'
 upload = multer({ 'dest': uploadPath })
 nodemailer = require 'nodemailer'
-jwt = require 'jsonwebtoken'
 config = require '../config'
 
 
@@ -177,10 +174,6 @@ router.put '/:id', auth.isAuthenticated, upload.single('photo'), (req, res) ->
 router.delete '/:id', auth.isAuthenticated, (req, res) ->
   User.findOneAndRemove {'_id': req.params.id}, (err) ->
     return res.with(res.type.dbError, err) if err
-    Company.findOneAndRemove {user: req.params.id}, (err, companyFounded) ->
-      return res.with(res.type.dbError, err) if err
-      Coupon.findOneAndRemove {'company': companyFounded._id}, (err) ->
-        return res.with(res.type.dbError, err) if err
-        res.with(res.type.deleteSuccess)
+    res.with(res.type.deleteSuccess)
 
 module.exports = router
