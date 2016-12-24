@@ -194,13 +194,14 @@ router.post('/', auth.isAuthenticated, function(req, res) {
   return User.findOne({
     email: req.body.email
   }, function(err, userFound) {
-    var type, user;
+    var password, type, user;
     if (userFound) {
       return res["with"](res.type.itemExists);
     }
     user = new User(req.body);
     user.created = new Date();
-    user.password = Math.random().toString(36).slice(-8);
+    password = Math.random().toString(36).slice(-8);
+    user.password = password;
     type = 'admin';
     if (req.body.group != null) {
       type = req.body.group;
@@ -233,13 +234,13 @@ router.post('/', auth.isAuthenticated, function(req, res) {
           });
           emailbodyfilepath = __dirname + '/../public/emails/account.html';
           emailHtml = fs.readFileSync(emailbodyfilepath, 'utf8');
-          emailHtml = emailHtml.replace('__PASSWORD__', userSaved.password);
+          emailHtml = emailHtml.replace('__PASSWORD__', password);
           emailHtml = emailHtml.replace('__NAME__', userSaved.name);
           emailHtml = emailHtml.replace('__EMAIL__', userSaved.email);
           mailOptions = {
-            from: '"One Consultoria Imobiliária" <one@one.com.br>',
+            from: '"One Consultoria Imobiliária" <sistemas@doisoitosete.com>',
             to: userSaved.email,
-            subject: 'Seu novo usuário em nosso sistema',
+            subject: 'Seu novo acesso ao nosso sistema',
             html: emailHtml.toString()
           };
           return transporter.sendMail(mailOptions, function(err) {
