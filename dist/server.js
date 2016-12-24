@@ -1,5 +1,5 @@
 'use strict';
-var app, bodyParser, chat, coffee, config, cors, corsOptions, express, expressValidator, mongoose, path, response, server, socket;
+var app, bodyParser, coffee, config, cors, corsOptions, express, expressValidator, mongoose, path, response;
 
 coffee = require('coffee-script/register');
 
@@ -20,8 +20,6 @@ path = require('path');
 cors = require('cors');
 
 response = require('./services/response');
-
-chat = require('./services/websocket');
 
 app = express();
 
@@ -60,14 +58,6 @@ app.use(function(req, res, next) {
   res["with"] = response["with"];
   next();
 });
-
-socket = require('socket.io');
-
-server = require('http').Server(app);
-
-server.listen(3000, app.get('host'));
-
-chat.listen(server);
 
 app.use('/api', require('./routes'));
 
