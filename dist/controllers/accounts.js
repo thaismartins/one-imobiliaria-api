@@ -194,7 +194,7 @@ router.put('/change-password', function(req, res) {
   });
 });
 
-router.get('/', auth.isAuthenticated, function(req, res) {
+router.get('/', function(req, res) {
   return User.find({}, '-password').populate('group').populate('companies').exec(function(err, usersFound) {
     if (err) {
       return res["with"](res.type.dbError, err);
@@ -217,7 +217,7 @@ router.get('/:id', auth.isAuthenticated, function(req, res) {
   });
 });
 
-router.post('/', function(req, res) {
+router.post('/', auth.isAuthenticated, function(req, res) {
   return User.findOne({
     email: req.body.email
   }, function(err, userFound) {

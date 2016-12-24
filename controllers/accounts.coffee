@@ -120,7 +120,7 @@ router.put '/change-password', (req, res) ->
 
 
 # GET ALL USERS
-router.get '/', auth.isAuthenticated, (req, res) ->
+router.get '/', (req, res) ->
   User.find({}, '-password').populate('group').populate('companies').exec (err, usersFound) ->
     return res.with(res.type.dbError, err) if err
     res.with(usersFound)
@@ -133,7 +133,7 @@ router.get '/:id', auth.isAuthenticated, (req, res) ->
     res.with(res.type.itemNotFound)
 
 # ADD NEW USER
-router.post '/', (req, res) ->
+router.post '/', auth.isAuthenticated, (req, res) ->
   User.findOne {email: req.body.email}, (err, userFound) ->
     return res.with(res.type.itemExists) if userFound
 
