@@ -35,11 +35,6 @@ app.use (req, res, next) ->
   next()
   return
 
-socket = require 'socket.io'
-server = require('http').Server(app)
-server.listen(3000, app.get('host'));
-chat.listen(server)
-
 app.use '/api', require './routes'
 
 app.listen app.get('port'), () ->
