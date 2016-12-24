@@ -8,6 +8,7 @@ multer = require 'multer'
 uploadPath = './public/uploads/users'
 upload = multer({ 'dest': uploadPath })
 nodemailer = require 'nodemailer'
+smtpTransport = require 'nodemailer-smtp-transport'
 config = require '../config'
 
 
@@ -15,32 +16,16 @@ config = require '../config'
 router.post '/auth', (req, res) ->
 
   req.checkBody('password', 'Password is required').notEmpty()
-  req.checkBody('origin', 'Origin is required').notEmpty()
-
-  if req.body.origin == 'admin'
-    req.checkBody('username', 'Username is required').notEmpty()
-    query = {username: req.body.username}
-  else
-    req.checkBody('email', 'Email is required').notEmpty()
-    query = {email: req.body.email}
+  req.checkBody('email', 'Email is required').notEmpty()
+  query = {email: req.body.email}
 
   errors = req.validationErrors(true);
   return res.with(res.type.fieldsMissing, {'errors': errors}) if errors
 
   User.findOne(query).populate('group').exec (err, userFound) ->
-    return res.with(res.type.itemNotFound) if not userFound? or userFound.group.type != req.body.origin
+    return res.with(res.type.itemNotFound) if not userFound?
     return res.with(res.type.wrongPassword) if !userFound.comparePassword(req.body.password)
-
-    hasToken = false
-    if req.body.pushToken?
-      for token in userFound.pushToken
-        hasToken = true if req.body.pushToken == token
-
-      if !hasToken
-        User.findOneAndUpdate query, {$push: {pushToken: req.body.pushToken}}, (err) ->
-          return res.with(res.type.codeError, err) if err
-
-    res.with({'token': userFound.generateToken(), 'code': userFound._id})
+    res.with({'token': userFound.generateToken(), 'code': userFound._id, 'type': userFound.group.type})
 
 # REMEMBER PASSWORD
 router.post '/remember', (req, res) ->
@@ -147,9 +132,41 @@ router.post '/', auth.isAuthenticated, (req, res) ->
         user.group = groupFound._id if groupFound
         user.save (err) ->
           return res.with(res.type.dbError, err) if err
-          user.token = user.generateToken()
-          user.populate 'group', (err, userSaved) ->
-            res.with(userSaved.withoutPassword())
+          userFound.token = user.generateToken()
+          userFound.populate 'group', (err, userSaved) ->
+            transporter = nodemailer.createTransport({
+              host: 'smtp.googlemail.com'
+              port: 465
+              secure: true
+              requireTLS: true
+              auth:
+                user: 'sistemas@doisoitosete.com'
+                pass: '@c3ss0287'
+            })
+
+#            transporter = nodemailer.createTransport smtpTransport(
+#              service: "gmail"
+#              auth:
+#                user: "thaismartinsweb@gmail.com"
+#                pass: "xxx"
+#            )
+
+            emailbodyfilepath = __dirname + '/../public/emails/account.html'
+            emailHtml = fs.readFileSync(emailbodyfilepath,'utf8')
+
+            emailHtml = emailHtml.replace('__PASSWORD__', userFound.password)
+            emailHtml = emailHtml.replace('__NAME__', userFound.name)
+            emailHtml = emailHtml.replace('__EMAIL__', userFound.email)
+
+            mailOptions =
+              from: '"One Consultoria Imobiliária" <one@one.com.br>'
+              to: userFound.email
+              subject: 'Seu novo usuário em nosso sistema'
+              html: emailHtml.toString()
+
+            transporter.sendMail mailOptions, (err) ->
+              return res.with(res.type.emailError, err) if err
+              res.with(userSaved.withoutPassword())
 
 # UPDATE EXISTENT USER
 router.put '/:id', auth.isAuthenticated, upload.single('photo'), (req, res) ->

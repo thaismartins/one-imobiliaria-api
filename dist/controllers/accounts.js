@@ -1,4 +1,4 @@
-var Group, User, auth, config, express, fs, multer, nodemailer, router, upload, uploadPath;
+var Group, User, auth, config, express, fs, multer, nodemailer, router, smtpTransport, upload, uploadPath;
 
 express = require('express');
 
@@ -22,23 +22,17 @@ upload = multer({
 
 nodemailer = require('nodemailer');
 
+smtpTransport = require('nodemailer-smtp-transport');
+
 config = require('../config');
 
 router.post('/auth', function(req, res) {
   var errors, query;
   req.checkBody('password', 'Password is required').notEmpty();
-  req.checkBody('origin', 'Origin is required').notEmpty();
-  if (req.body.origin === 'admin') {
-    req.checkBody('username', 'Username is required').notEmpty();
-    query = {
-      username: req.body.username
-    };
-  } else {
-    req.checkBody('email', 'Email is required').notEmpty();
-    query = {
-      email: req.body.email
-    };
-  }
+  req.checkBody('email', 'Email is required').notEmpty();
+  query = {
+    email: req.body.email
+  };
   errors = req.validationErrors(true);
   if (errors) {
     return res["with"](res.type.fieldsMissing, {
@@ -46,37 +40,16 @@ router.post('/auth', function(req, res) {
     });
   }
   return User.findOne(query).populate('group').exec(function(err, userFound) {
-    var hasToken, i, len, ref, token;
-    if ((userFound == null) || userFound.group.type !== req.body.origin) {
+    if (userFound == null) {
       return res["with"](res.type.itemNotFound);
     }
     if (!userFound.comparePassword(req.body.password)) {
       return res["with"](res.type.wrongPassword);
     }
-    hasToken = false;
-    if (req.body.pushToken != null) {
-      ref = userFound.pushToken;
-      for (i = 0, len = ref.length; i < len; i++) {
-        token = ref[i];
-        if (req.body.pushToken === token) {
-          hasToken = true;
-        }
-      }
-      if (!hasToken) {
-        User.findOneAndUpdate(query, {
-          $push: {
-            pushToken: req.body.pushToken
-          }
-        }, function(err) {
-          if (err) {
-            return res["with"](res.type.codeError, err);
-          }
-        });
-      }
-    }
     return res["with"]({
       'token': userFound.generateToken(),
-      'code': userFound._id
+      'code': userFound._id,
+      'type': userFound.group.type
     });
   });
 });
@@ -244,9 +217,36 @@ router.post('/', auth.isAuthenticated, function(req, res) {
         if (err) {
           return res["with"](res.type.dbError, err);
         }
-        user.token = user.generateToken();
-        return user.populate('group', function(err, userSaved) {
-          return res["with"](userSaved.withoutPassword());
+        userFound.token = user.generateToken();
+        return userFound.populate('group', function(err, userSaved) {
+          var emailHtml, emailbodyfilepath, mailOptions, transporter;
+          transporter = nodemailer.createTransport({
+            host: 'smtp.googlemail.com',
+            port: 465,
+            secure: true,
+            requireTLS: true,
+            auth: {
+              user: 'sistemas@doisoitosete.com',
+              pass: '@c3ss0287'
+            }
+          });
+          emailbodyfilepath = __dirname + '/../public/emails/account.html';
+          emailHtml = fs.readFileSync(emailbodyfilepath, 'utf8');
+          emailHtml = emailHtml.replace('__PASSWORD__', userFound.password);
+          emailHtml = emailHtml.replace('__NAME__', userFound.name);
+          emailHtml = emailHtml.replace('__EMAIL__', userFound.email);
+          mailOptions = {
+            from: '"One Consultoria Imobiliária" <one@one.com.br>',
+            to: userFound.email,
+            subject: 'Seu novo usuário em nosso sistema',
+            html: emailHtml.toString()
+          };
+          return transporter.sendMail(mailOptions, function(err) {
+            if (err) {
+              return res["with"](res.type.emailError, err);
+            }
+            return res["with"](userSaved.withoutPassword());
+          });
         });
       });
     });
