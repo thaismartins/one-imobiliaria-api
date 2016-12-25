@@ -19,6 +19,26 @@ router.get('/', auth.isAuthenticated, function(req, res) {
   });
 });
 
+router.get('/states', auth.isAuthenticated, function(req, res) {
+  return City.distinct('state', function(err, citiesFound) {
+    if (err) {
+      return res["with"](res.type.dbError, err);
+    }
+    return res["with"](citiesFound);
+  });
+});
+
+router.get('/states/:state', auth.isAuthenticated, function(req, res) {
+  return City.find({
+    state: req.params.state
+  })(function(err, citiesFound) {
+    if (err) {
+      return res["with"](res.type.dbError, err);
+    }
+    return res["with"](citiesFound);
+  });
+});
+
 router.get('/search', function(req, res) {
   var limit, search;
   search = {};

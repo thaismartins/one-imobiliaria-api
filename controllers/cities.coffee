@@ -10,6 +10,18 @@ router.get '/', auth.isAuthenticated, (req, res) ->
     return res.with(res.type.dbError, err) if err
     res.with(citiesFound)
 
+# GET ALL STATES
+router.get '/states', auth.isAuthenticated, (req, res) ->
+  City.distinct 'state', (err, citiesFound) ->
+    return res.with(res.type.dbError, err) if err
+    res.with(citiesFound)
+
+# GET ALL STATES
+router.get '/states/:state', auth.isAuthenticated, (req, res) ->
+  City.find({state: req.params.state}) (err, citiesFound) ->
+    return res.with(res.type.dbError, err) if err
+    res.with(citiesFound)
+
 # SEARCH SPECIFIC CITY
 router.get '/search', (req, res) ->
 

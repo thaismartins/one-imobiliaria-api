@@ -17,4 +17,6 @@ router.use('/cities', require('./controllers/cities'));
 
 router.use('/clients', require('./controllers/clients'));
 
+router.use('/properties', require('./controllers/properties'));
+
 module.exports = router;
