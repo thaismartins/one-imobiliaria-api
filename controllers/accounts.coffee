@@ -102,7 +102,7 @@ router.put '/:id', auth.isAuthenticated, upload.single('photo'), (req, res) ->
       user.group = groupFound._id if groupFound
       User.findOneAndUpdate({_id: req.params.id}, {$set: user.forUpdate()}, {new: true}).populate('group').exec (err, userUpdated) ->
         return res.with(res.type.dbError, err) if err
-        userUpdated.token = user.generateToken()
+        userUpdated.token = userUpdated.generateToken()
         res.with(userUpdated.withoutPassword())
 
 # DELETE USER

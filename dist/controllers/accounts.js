@@ -178,7 +178,7 @@ router.put('/:id', auth.isAuthenticated, upload.single('photo'), function(req, r
         if (err) {
           return res["with"](res.type.dbError, err);
         }
-        userUpdated.token = user.generateToken();
+        userUpdated.token = userUpdated.generateToken();
         return res["with"](userUpdated.withoutPassword());
       });
     });
