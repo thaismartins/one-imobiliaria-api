@@ -31,7 +31,7 @@ router.get('/states', auth.isAuthenticated, function(req, res) {
 router.get('/states/:state', auth.isAuthenticated, function(req, res) {
   return City.find({
     state: req.params.state
-  })(function(err, citiesFound) {
+  }, function(err, citiesFound) {
     if (err) {
       return res["with"](res.type.dbError, err);
     }

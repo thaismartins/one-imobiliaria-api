@@ -25,7 +25,7 @@ PropertySchema = new Schema
   condominium: type: Number
   iptu: type: Number
   location: type: Number
-  payment: [type: String, enum: ['financing', 'money', 'others']]
+  payments: [type: String, enum: ['financing', 'money', 'others']]
   exchange: type: Number
   settled: type: Boolean
   difference: type: Number

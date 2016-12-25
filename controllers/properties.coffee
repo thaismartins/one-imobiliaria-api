@@ -20,16 +20,14 @@ router.get '/:id', auth.isAuthenticated, (req, res) ->
 
 # ADD NEW PROPERTY
 router.post '/', auth.isAuthenticated, (req, res) ->
-  Client.findOne {id: req.body.client}, (err, clientFound) ->
+  Client.findOne {'_id': req.body.client}, (err, clientFound) ->
     return res.with(res.type.itemNotFound) unless clientFound?
 
     property = new Property(req.body)
     property.created = new Date()
     property.save (err, propertySaved) ->
       return res.with(res.type.dbError, err) if err
-      propertySaved.populate('client').exec (err, propertyUpdated) ->
-        return res.with(res.type.dbError, err) if err
-        res.with(propertyUpdated)
+      res.with(propertySaved)
 
 # UPDATE EXISTENT PROPERTY
 router.put '/:id', auth.isAuthenticated, (req, res) ->

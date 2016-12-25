@@ -18,13 +18,12 @@ router.get '/states', auth.isAuthenticated, (req, res) ->
 
 # GET ALL STATES
 router.get '/states/:state', auth.isAuthenticated, (req, res) ->
-  City.find({state: req.params.state}) (err, citiesFound) ->
+  City.find {state: req.params.state}, (err, citiesFound) ->
     return res.with(res.type.dbError, err) if err
     res.with(citiesFound)
 
 # SEARCH SPECIFIC CITY
 router.get '/search', (req, res) ->
-
   search = {}
   search.name = { $regex: utils.regexStringAccents(req.query.name) + '|' + req.query.name, $options: 'i' } if req.query.name?
   search.state = req.query.state if req.query.state?

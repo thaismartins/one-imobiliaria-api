@@ -77,7 +77,7 @@ PropertySchema = new Schema({
   location: {
     type: Number
   },
-  payment: [
+  payments: [
     {
       type: String,
       "enum": ['financing', 'money', 'others']

@@ -37,7 +37,7 @@ router.get('/:id', auth.isAuthenticated, function(req, res) {
 
 router.post('/', auth.isAuthenticated, function(req, res) {
   return Client.findOne({
-    id: req.body.client
+    '_id': req.body.client
   }, function(err, clientFound) {
     var property;
     if (clientFound == null) {
@@ -49,12 +49,7 @@ router.post('/', auth.isAuthenticated, function(req, res) {
       if (err) {
         return res["with"](res.type.dbError, err);
       }
-      return propertySaved.populate('client').exec(function(err, propertyUpdated) {
-        if (err) {
-          return res["with"](res.type.dbError, err);
-        }
-        return res["with"](propertyUpdated);
-      });
+      return res["with"](propertySaved);
     });
   });
 });
