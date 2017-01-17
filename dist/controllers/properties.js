@@ -1,4 +1,4 @@
-var Client, Property, auth, config, express, router;
+var Client, NodeGeocoder, Property, auth, config, express, geocoder, geocoderOptions, router;
 
 express = require('express');
 
@@ -11,6 +11,17 @@ Property = require('../models/Property');
 Client = require('../models/Client');
 
 config = require('../config');
+
+NodeGeocoder = require('node-geocoder');
+
+geocoderOptions = {
+  provider: 'google',
+  httpAdapter: 'https',
+  apiKey: config.googleapi,
+  formatter: null
+};
+
+geocoder = NodeGeocoder(geocoderOptions);
 
 router.get('/', auth.isAuthenticated, function(req, res) {
   return Property.find(function(err, propertysFound) {
@@ -45,11 +56,20 @@ router.post('/', auth.isAuthenticated, function(req, res) {
     }
     property = new Property(req.body);
     property.created = new Date();
-    return property.save(function(err, propertySaved) {
-      if (err) {
-        return res["with"](res.type.dbError, err);
+    return geocoder.geocode(property.fullAddress()).then(function(points) {
+      if (!(points.length > 0)) {
+        return res["with"](res.type.addressNotFound);
       }
-      return res["with"](propertySaved);
+      property.address.lat = points[0].latitude;
+      property.address.lng = points[0].longitude;
+      return property.save(function(err, propertySaved) {
+        if (err) {
+          return res["with"](res.type.dbError, err);
+        }
+        return res["with"](propertySaved);
+      });
+    })["catch"](function(err) {
+      return res["with"](res.type.mapsError, err);
     });
   });
 });

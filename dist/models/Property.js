@@ -48,6 +48,12 @@ PropertySchema = new Schema({
     cep: {
       type: String,
       required: true
+    },
+    lat: {
+      type: String
+    },
+    lng: {
+      type: String
     }
   },
   floor: {
@@ -98,6 +104,93 @@ PropertySchema = new Schema({
   carValue: {
     type: Number
   },
+  interest: {
+    type: [
+      {
+        type: String,
+        "enum": ['house', 'apartment', 'car', 'others']
+      }
+    ],
+    meters: {
+      min: {
+        type: Number
+      },
+      max: {
+        type: Number
+      }
+    },
+    vacancy: {
+      min: {
+        type: Number
+      },
+      max: {
+        type: Number
+      }
+    },
+    floor: {
+      min: {
+        type: Number
+      },
+      max: {
+        type: Number
+      }
+    },
+    value: {
+      min: {
+        type: Number
+      },
+      max: {
+        type: Number
+      }
+    },
+    address: {
+      street: {
+        type: String
+      },
+      number: {
+        type: String
+      },
+      complement: {
+        type: String
+      },
+      neighborhood: {
+        type: String
+      },
+      city: {
+        type: String
+      },
+      state: {
+        type: String
+      },
+      cep: {
+        type: String
+      }
+    },
+    hasSubway: {
+      type: Boolean
+    },
+    subwayStation: {
+      type: String
+    },
+    radius: {
+      type: Number
+    },
+    condominium: {
+      type: Number
+    },
+    iptu: {
+      type: Number
+    },
+    location: {
+      type: Number
+    },
+    payments: [
+      {
+        type: String,
+        "enum": ['financing', 'money', 'others']
+      }
+    ]
+  },
   created: {
     type: Date
   },
@@ -112,6 +205,18 @@ PropertySchema.methods.withoutId = function() {
   obj = this.toObject();
   delete obj._id;
   return obj;
+};
+
+PropertySchema.methods.fullAddress = function() {
+  var address, obj;
+  obj = this.toObject();
+  address = obj.address.street + ', ';
+  address += obj.address.number + ' - ';
+  address += obj.address.neighborhood + ', ';
+  address += obj.address.city + ' - ';
+  address += obj.address.state + ', ';
+  address += obj.address.cep + ', Brazil';
+  return address;
 };
 
 PropertySchema.methods.forUpdate = function() {

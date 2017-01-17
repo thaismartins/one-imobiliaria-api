@@ -85,21 +85,15 @@ module.exports = {
       'status': 500,
       'success': false
     },
-    'couponNotAvailable': {
-      'text': 'Coupon is no available for rescue',
+    'addressNotFound': {
+      'text': 'The address was not found in google maps API',
       'code': 8,
       'status': 500,
       'success': false
     },
-    'couponNotPermitted': {
-      'text': 'User can\'t rescue this coupon',
+    'mapsError': {
+      'text': 'Error extract maps API latitude and logitude',
       'code': 9,
-      'status': 500,
-      'success': false
-    },
-    'couponRescued': {
-      'text': 'Coupon has already been rescued',
-      'code': 10,
       'status': 500,
       'success': false
     }

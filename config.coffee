@@ -11,3 +11,4 @@ module.exports =
   'port': PORT,
   'host': IP,
   'uri': 'http://' + IP + ':' + PORT
+  'googleapi': 'AIzaSyAJDB01qnVKG9xSOEWheD4HLnxI0uU7-44'

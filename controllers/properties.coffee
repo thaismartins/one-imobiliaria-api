@@ -4,6 +4,13 @@ auth = require '../services/auth'
 Property = require '../models/Property'
 Client = require '../models/Client'
 config = require '../config'
+NodeGeocoder = require('node-geocoder')
+geocoderOptions =
+  provider: 'google'
+  httpAdapter: 'https'
+  apiKey: config.googleapi
+  formatter: null
+geocoder = NodeGeocoder(geocoderOptions)
 
 # GET ALL PROPERTIES
 router.get '/', auth.isAuthenticated, (req, res) ->
@@ -25,9 +32,17 @@ router.post '/', auth.isAuthenticated, (req, res) ->
 
     property = new Property(req.body)
     property.created = new Date()
-    property.save (err, propertySaved) ->
-      return res.with(res.type.dbError, err) if err
-      res.with(propertySaved)
+    geocoder.geocode(property.fullAddress())
+    .then (points) ->
+      return res.with(res.type.addressNotFound) unless points.length > 0
+      property.address.lat = points[0].latitude
+      property.address.lng = points[0].longitude
+      property.save (err, propertySaved) ->
+        return res.with(res.type.dbError, err) if err
+        res.with(propertySaved)
+    .catch (err) ->
+      res.with(res.type.mapsError, err)
+
 
 # UPDATE EXISTENT PROPERTY
 router.put '/:id', auth.isAuthenticated, (req, res) ->

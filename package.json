@@ -39,6 +39,7 @@
     "mongoose": "^4.5.1",
     "morgan": "^1.7.0",
     "multer": "^1.1.0",
+    "node-geocoder": "^3.15.2",
     "nodemailer": "^2.4.2",
     "nodemailer-smtp-transport": "^2.5.0",
     "path": "^0.12.7",
