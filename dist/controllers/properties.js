@@ -62,6 +62,7 @@ router.post('/', auth.isAuthenticated, function(req, res) {
       }
       property.address.lat = points[0].latitude;
       property.address.lng = points[0].longitude;
+      console.log(property);
       return property.save(function(err, propertySaved) {
         if (err) {
           return res["with"](res.type.dbError, err);

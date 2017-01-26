@@ -105,7 +105,7 @@ PropertySchema = new Schema({
     type: Number
   },
   interest: {
-    type: [
+    types: [
       {
         type: String,
         "enum": ['house', 'apartment', 'car', 'others']
@@ -166,6 +166,30 @@ PropertySchema = new Schema({
         type: String
       }
     },
+    condominium: {
+      min: {
+        type: Number
+      },
+      max: {
+        type: Number
+      }
+    },
+    iptu: {
+      min: {
+        type: Number
+      },
+      max: {
+        type: Number
+      }
+    },
+    location: {
+      min: {
+        type: Number
+      },
+      max: {
+        type: Number
+      }
+    },
     hasSubway: {
       type: Boolean
     },
@@ -175,21 +199,15 @@ PropertySchema = new Schema({
     radius: {
       type: Number
     },
-    condominium: {
-      type: Number
-    },
-    iptu: {
-      type: Number
-    },
-    location: {
-      type: Number
-    },
     payments: [
       {
         type: String,
         "enum": ['financing', 'money', 'others']
       }
-    ]
+    ],
+    settled: {
+      type: Boolean
+    }
   },
   created: {
     type: Date

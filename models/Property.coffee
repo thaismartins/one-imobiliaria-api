@@ -34,7 +34,7 @@ PropertySchema = new Schema
   car: type: Boolean
   carValue: type: Number
   interest:
-    type: [type: String, enum: ['house', 'apartment', 'car', 'others']],
+    types: [type: String, enum: ['house', 'apartment', 'car', 'others']],
     meters:
       min: type: Number
       max: type: Number
@@ -55,13 +55,20 @@ PropertySchema = new Schema
       city: type: String
       state: type: String
       cep: type: String
+    condominium:
+      min: type: Number
+      max: type: Number
+    iptu:
+      min: type: Number
+      max: type: Number
+    location:
+      min: type: Number
+      max: type: Number
     hasSubway: type: Boolean
     subwayStation: type: String
     radius: type: Number
-    condominium: type: Number
-    iptu: type: Number
-    location: type: Number
     payments: [type: String, enum: ['financing', 'money', 'others']]
+    settled: type: Boolean
   created: type: Date
   updated: type: Date, default: Date.now
 

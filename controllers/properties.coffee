@@ -37,6 +37,7 @@ router.post '/', auth.isAuthenticated, (req, res) ->
       return res.with(res.type.addressNotFound) unless points.length > 0
       property.address.lat = points[0].latitude
       property.address.lng = points[0].longitude
+      console.log(property)
       property.save (err, propertySaved) ->
         return res.with(res.type.dbError, err) if err
         res.with(propertySaved)
