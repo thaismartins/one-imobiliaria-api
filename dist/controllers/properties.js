@@ -1,4 +1,4 @@
-var Client, NodeGeocoder, Property, auth, config, express, geocoder, geocoderOptions, router;
+var Client, NodeGeocoder, Property, auth, config, csv, express, fs, geocoder, geocoderOptions, multer, router, upload, uploadPath;
 
 express = require('express');
 
@@ -22,6 +22,18 @@ geocoderOptions = {
 };
 
 geocoder = NodeGeocoder(geocoderOptions);
+
+multer = require('multer');
+
+uploadPath = './public/uploads/properties';
+
+upload = multer({
+  'dest': uploadPath
+});
+
+fs = require('fs');
+
+csv = require('fast-csv');
 
 router.get('/', auth.isAuthenticated, function(req, res) {
   return Property.find(function(err, propertysFound) {
@@ -62,7 +74,6 @@ router.post('/', auth.isAuthenticated, function(req, res) {
       }
       property.address.lat = points[0].latitude;
       property.address.lng = points[0].longitude;
-      console.log(property);
       return property.save(function(err, propertySaved) {
         if (err) {
           return res["with"](res.type.dbError, err);
@@ -72,6 +83,46 @@ router.post('/', auth.isAuthenticated, function(req, res) {
     })["catch"](function(err) {
       return res["with"](res.type.mapsError, err);
     });
+  });
+});
+
+router.post('/import/csv', auth.isAuthenticated, upload.single('csv'), function(req, res) {
+  if (req.file == null) {
+    return res["with"](res.type.csvNotSended);
+  }
+  return csv.fromPath(req.file.path).transform(function(data, next) {
+    var client;
+    client = new Client();
+    client.created = new Date();
+    console.log(data);
+    if (data[0] !== 'codigo') {
+      return Client.findOne({
+        $or: [
+          {
+            'email': data[2]
+          }, {
+            'phones.home': data[3]
+          }, {
+            'phones.cell': data[4]
+          }, {
+            'phones.commercial': data[5]
+          }
+        ]
+      }, function(err, clientFound) {
+        if (clientFound) {
+          next(clientFound);
+        }
+        client = new Client(data);
+        client.created = new Date();
+        return console.log(data);
+      });
+    }
+  }).on('data', function(data) {
+    console.log('Entrou');
+    return console.log(data);
+  }).on('end', function() {
+    console.log('Finalizado');
+    return res["with"](res.type.mapsError);
   });
 });
 

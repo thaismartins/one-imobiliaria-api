@@ -96,6 +96,12 @@ module.exports = {
       'code': 9,
       'status': 500,
       'success': false
+    },
+    'csvNotSended': {
+      'text': 'Error any csv was sended',
+      'code': 10,
+      'status': 500,
+      'success': false
     }
   },
   "with": function(message, data) {

@@ -11,6 +11,11 @@ geocoderOptions =
   apiKey: config.googleapi
   formatter: null
 geocoder = NodeGeocoder(geocoderOptions)
+multer = require 'multer'
+uploadPath = './public/uploads/properties'
+upload = multer({ 'dest': uploadPath })
+fs = require 'fs'
+csv = require 'fast-csv'
 
 # GET ALL PROPERTIES
 router.get '/', auth.isAuthenticated, (req, res) ->
@@ -37,12 +42,68 @@ router.post '/', auth.isAuthenticated, (req, res) ->
       return res.with(res.type.addressNotFound) unless points.length > 0
       property.address.lat = points[0].latitude
       property.address.lng = points[0].longitude
-      console.log(property)
+
       property.save (err, propertySaved) ->
         return res.with(res.type.dbError, err) if err
         res.with(propertySaved)
     .catch (err) ->
       res.with(res.type.mapsError, err)
+
+# ADD NEW PROPERTY
+router.post '/import/csv', auth.isAuthenticated, upload.single('csv'), (req, res) ->
+
+  return res.with(res.type.csvNotSended) unless req.file?
+
+  csv
+  .fromPath(req.file.path)
+  .transform (data, next) ->
+    client = new Client()
+
+    client.created = new Date()
+    console.log(data)
+    if data[0] != 'codigo'
+      Client.findOne {$or :[{'email': data[2]}, {'phones.home': data[3]}, {'phones.cell': data[4]}, {'phones.commercial': data[5]}]}, (err, clientFound) ->
+        next(clientFound) if clientFound
+        client = new Client(data)
+        client.created = new Date()
+        console.log(data)
+#        client.save (err, clientSaved) ->
+#          return res.with(res.type.dbError, err) if err
+#          next(clientSaved)
+
+  .on 'data', (data) ->
+    console.log('Entrou')
+
+#    if data[0] != 'codigo'
+#
+#
+    console.log(data)
+
+  .on 'end', () ->
+    console.log('Finalizado')
+    res.with(res.type.mapsError)
+
+
+
+
+#  Client.findOne {$or :[{'email': req.body.client.phone}, {'phone': req.body.client.phone}]}, (err, clientFound) ->
+#
+#  Client.findOne {'_id': req.body.client}, (err, clientFound) ->
+#    return res.with(res.type.itemNotFound) unless clientFound?
+#
+#    property = new Property(req.body)
+#    property.created = new Date()
+#    geocoder.geocode(property.fullAddress())
+#    .then (points) ->
+#      return res.with(res.type.addressNotFound) unless points.length > 0
+#      property.address.lat = points[0].latitude
+#      property.address.lng = points[0].longitude
+#
+#      property.save (err, propertySaved) ->
+#        return res.with(res.type.dbError, err) if err
+#        res.with(propertySaved)
+#    .catch (err) ->
+#      res.with(res.type.mapsError, err)
 
 
 # UPDATE EXISTENT PROPERTY
