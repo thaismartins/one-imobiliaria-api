@@ -32,6 +32,11 @@ module.exports =
       'code': 0,
       'status': 200,
       'success': true
+    'importedSuccess':
+      'text': 'Items imported with success',
+      'code': 0,
+      'status': 200,
+      'success': true
     'dbError':
       'text': 'Error on database',
       'code': 1,

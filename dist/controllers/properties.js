@@ -87,42 +87,135 @@ router.post('/', auth.isAuthenticated, function(req, res) {
 });
 
 router.post('/import/csv', auth.isAuthenticated, upload.single('csv'), function(req, res) {
+  var errors, success;
   if (req.file == null) {
     return res["with"](res.type.csvNotSended);
   }
-  return csv.fromPath(req.file.path).transform(function(data, next) {
-    var client;
-    client = new Client();
-    client.created = new Date();
-    console.log(data);
-    if (data[0] !== 'codigo') {
-      return Client.findOne({
-        $or: [
-          {
-            'email': data[2]
-          }, {
-            'phones.home': data[3]
-          }, {
-            'phones.cell': data[4]
-          }, {
-            'phones.commercial': data[5]
-          }
-        ]
-      }, function(err, clientFound) {
-        if (clientFound) {
-          next(clientFound);
-        }
-        client = new Client(data);
-        client.created = new Date();
-        return console.log(data);
-      });
+  errors = [];
+  success = [];
+  return csv.fromPath(req.file.path).validate(function(data, next) {
+    var client, property, search, type;
+    if (data[0] === 'codigo') {
+      return next(null, false);
     }
+    type = '';
+    if (data[6] !== '') {
+      switch (data[6].toLowerCase()) {
+        case 'apartamento':
+          type = 'apart';
+          break;
+        case 'casa':
+          type = 'house';
+          break;
+        case 'carro':
+          type = 'car';
+          break;
+        default:
+          type = 'others';
+      }
+    }
+    property = new Property();
+    property.address.street = data[7];
+    property.address.number = data[8];
+    property.address.complement = data[9];
+    property.address.neighborhood = data[10];
+    property.address.city = data[11];
+    property.address.state = data[12];
+    property.address.cep = data[13];
+    property.type = type;
+    property.code = data[0];
+    property.floor = data[14];
+    property.vacancy = data[16];
+    property.meters = data[15];
+    property.value = data[18];
+    property.condominium = data[19];
+    property.iptu = data[20];
+    property.location = data[21];
+    if (data[17] !== '') {
+      property.hasSubway = true;
+      property.subwayStation = data[17];
+    }
+    search = [];
+    search[0] = {
+      'email': data[2]
+    };
+    search[1] = {
+      'phones.home': data[3]
+    };
+    search[2] = {
+      'phones.cell': data[4]
+    };
+    search[3] = {
+      'phones.commercial': data[5]
+    };
+    client = new Client();
+    client.name = data[1];
+    client.email = data[2];
+    client.phones = {
+      cell: data[4],
+      home: data[3],
+      commercial: data[5]
+    };
+    client.created = new Date();
+    return Client.findOne({
+      $or: search
+    }, function(err, clientFound) {
+      if (err) {
+        return next(err);
+      }
+      if (clientFound) {
+        errors.push({
+          client: clientFound,
+          property: property,
+          error: {
+            message: 'Client exists',
+            code: 1
+          }
+        });
+        return next(null, false);
+      } else {
+        return client.save(function(err, clientSaved) {
+          if (err) {
+            errors.push({
+              client: clientFound,
+              property: property,
+              error: {
+                message: 'Error on save client',
+                code: 2
+              }
+            });
+            return next(err);
+          }
+          property.client = clientSaved._id;
+          return property.save(function(err, propertySaved) {
+            if (err) {
+              errors.push({
+                client: clientFound,
+                property: property,
+                error: {
+                  message: 'Error on save property',
+                  code: 3
+                }
+              });
+              return next(err);
+            }
+            success.push({
+              client: clientSaved,
+              property: propertySaved
+            });
+            return next(null, true);
+          });
+        });
+      }
+    });
   }).on('data', function(data) {
-    console.log('Entrou');
-    return console.log(data);
+    return console.log('Entrou data');
   }).on('end', function() {
-    console.log('Finalizado');
-    return res["with"](res.type.mapsError);
+    console.log('Imported successfully');
+    return res["with"](res.type.importedSuccess, {
+      errors: errors,
+      success: success
+    });
   });
 });
 

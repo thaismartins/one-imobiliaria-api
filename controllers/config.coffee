@@ -33,7 +33,6 @@ router.post '/groups', (req, res) ->
   promises = []
   groups = [{title: 'Admin'}, {title: 'Broker'}]
   groups.forEach (group) ->
-    console.log(group)
     d = Promise.defer()
     Group.findOneAndUpdate {type: utils.createSlug(group.title)}, {$set: group}, {new: true, upsert: true}, (err, groupUpdated) ->
       if err then d.reject(err)

@@ -4,6 +4,11 @@ mongoose = require 'mongoose'
 Schema = mongoose.Schema
 config = require '../config'
 
+setValue = (value) ->
+  newValue = value.toString().replace(/[^0-9]+/g, "")
+  finalValue = newValue.toString().slice(0, -2) + '.' + newValue.toString().slice(-2)
+  return Number(finalValue)
+
 PropertySchema = new Schema
   type: type: String, required: true
   code: type: String, required: true
@@ -23,10 +28,10 @@ PropertySchema = new Schema
   meters: type: Number
   hasSubway: type: Boolean
   subwayStation: type: String
-  value: type: Number
-  condominium: type: Number
-  iptu: type: Number
-  location: type: Number
+  value: type: Number, set: setValue
+  condominium: type: Number, set: setValue
+  iptu: type: Number, set: setValue
+  location: type: Number, set: setValue
   payments: [type: String, enum: ['financing', 'money', 'others']]
   exchange: type: Number
   settled: type: Boolean

@@ -1,11 +1,18 @@
 'use strict';
-var PropertySchema, Schema, config, mongoose;
+var PropertySchema, Schema, config, mongoose, setValue;
 
 mongoose = require('mongoose');
 
 Schema = mongoose.Schema;
 
 config = require('../config');
+
+setValue = function(value) {
+  var finalValue, newValue;
+  newValue = value.toString().replace(/[^0-9]+/g, "");
+  finalValue = newValue.toString().slice(0, -2) + '.' + newValue.toString().slice(-2);
+  return Number(finalValue);
+};
 
 PropertySchema = new Schema({
   type: {
@@ -72,16 +79,20 @@ PropertySchema = new Schema({
     type: String
   },
   value: {
-    type: Number
+    type: Number,
+    set: setValue
   },
   condominium: {
-    type: Number
+    type: Number,
+    set: setValue
   },
   iptu: {
-    type: Number
+    type: Number,
+    set: setValue
   },
   location: {
-    type: Number
+    type: Number,
+    set: setValue
   },
   payments: [
     {

@@ -69,7 +69,6 @@ router.post('/groups', function(req, res) {
   ];
   groups.forEach(function(group) {
     var d;
-    console.log(group);
     d = Promise.defer();
     Group.findOneAndUpdate({
       type: utils.createSlug(group.title)
