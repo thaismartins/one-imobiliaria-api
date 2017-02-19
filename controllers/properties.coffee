@@ -91,6 +91,17 @@ router.post '/import/csv', auth.isAuthenticated, upload.single('csv'), (req, res
       property.hasSubway = true
       property.subwayStation = data[17]
 
+    propertyErrors = property.validateFields()
+    console.log(propertyErrors);
+    if propertyErrors.length > 0
+      errors.push
+        client: {}
+        property: property
+        error:
+          message: 'Error on validate property: ' + propertyErrors.join(', ')
+          code: 3
+      return next(null, false)
+
     search = []
     search[0] = {'email': data[2]}
     search[1] = {'phones.home': data[3]}
@@ -146,28 +157,6 @@ router.post '/import/csv', auth.isAuthenticated, upload.single('csv'), (req, res
   .on 'end', () ->
     console.log('Imported successfully')
     res.with(res.type.importedSuccess, {errors: errors, success: success})
-
-
-
-
-#  Client.findOne {$or :[{'email': req.body.client.phone}, {'phone': req.body.client.phone}]}, (err, clientFound) ->
-#
-#  Client.findOne {'_id': req.body.client}, (err, clientFound) ->
-#    return res.with(res.type.itemNotFound) unless clientFound?
-#
-#    property = new Property(req.body)
-#    property.created = new Date()
-#    geocoder.geocode(property.fullAddress())
-#    .then (points) ->
-#      return res.with(res.type.addressNotFound) unless points.length > 0
-#      property.address.lat = points[0].latitude
-#      property.address.lng = points[0].longitude
-#
-#      property.save (err, propertySaved) ->
-#        return res.with(res.type.dbError, err) if err
-#        res.with(propertySaved)
-#    .catch (err) ->
-#      res.with(res.type.mapsError, err)
 
 
 # UPDATE EXISTENT PROPERTY

@@ -94,7 +94,7 @@ router.post('/import/csv', auth.isAuthenticated, upload.single('csv'), function(
   errors = [];
   success = [];
   return csv.fromPath(req.file.path).validate(function(data, next) {
-    var client, property, search, type;
+    var client, property, propertyErrors, search, type;
     if (data[0] === 'codigo') {
       return next(null, false);
     }
@@ -134,6 +134,19 @@ router.post('/import/csv', auth.isAuthenticated, upload.single('csv'), function(
     if (data[17] !== '') {
       property.hasSubway = true;
       property.subwayStation = data[17];
+    }
+    propertyErrors = property.validateFields();
+    console.log(propertyErrors);
+    if (propertyErrors.length > 0) {
+      errors.push({
+        client: {},
+        property: property,
+        error: {
+          message: 'Error on validate property: ' + propertyErrors.join(', '),
+          code: 3
+        }
+      });
+      return next(null, false);
     }
     search = [];
     search[0] = {

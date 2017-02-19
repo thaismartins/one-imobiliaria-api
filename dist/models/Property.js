@@ -1,5 +1,5 @@
 'use strict';
-var PropertySchema, Schema, config, mongoose, setValue;
+var PropertySchema, Schema, config, mongoose, setCEP, setOnlyNumbers, setValue;
 
 mongoose = require('mongoose');
 
@@ -11,7 +11,23 @@ setValue = function(value) {
   var finalValue, newValue;
   newValue = value.toString().replace(/[^0-9]+/g, "");
   finalValue = newValue.toString().slice(0, -2) + '.' + newValue.toString().slice(-2);
+  if (finalValue === '.') {
+    return '';
+  }
   return Number(finalValue);
+};
+
+setOnlyNumbers = function(value) {
+  return Number(value.toString().replace(/[^0-9]+/g, ""));
+};
+
+setCEP = function(value) {
+  var newValue;
+  newValue = value.toString().replace(/[^0-9]+/g, "");
+  if (newValue === '') {
+    return '';
+  }
+  return newValue.toString().slice(0, -3) + '-' + newValue.toString().slice(-3);
 };
 
 PropertySchema = new Schema({
@@ -54,7 +70,8 @@ PropertySchema = new Schema({
     },
     cep: {
       type: String,
-      required: true
+      required: true,
+      set: setCEP
     },
     lat: {
       type: String
@@ -64,13 +81,16 @@ PropertySchema = new Schema({
     }
   },
   floor: {
-    type: String
+    type: Number,
+    set: setOnlyNumbers
   },
   vacancy: {
-    type: Number
+    type: Number,
+    set: setOnlyNumbers
   },
   meters: {
-    type: Number
+    type: Number,
+    set: setOnlyNumbers
   },
   hasSubway: {
     type: Boolean
@@ -124,34 +144,32 @@ PropertySchema = new Schema({
     ],
     meters: {
       min: {
-        type: Number
+        type: Number,
+        set: setOnlyNumbers
       },
       max: {
-        type: Number
+        type: Number,
+        set: setOnlyNumbers
       }
     },
     vacancy: {
       min: {
-        type: Number
+        type: Number,
+        set: setOnlyNumbers
       },
       max: {
-        type: Number
+        type: Number,
+        set: setOnlyNumbers
       }
     },
     floor: {
       min: {
-        type: Number
+        type: Number,
+        set: setOnlyNumbers
       },
       max: {
-        type: Number
-      }
-    },
-    value: {
-      min: {
-        type: Number
-      },
-      max: {
-        type: Number
+        type: Number,
+        set: setOnlyNumbers
       }
     },
     address: {
@@ -174,31 +192,48 @@ PropertySchema = new Schema({
         type: String
       },
       cep: {
-        type: String
+        type: String,
+        set: setCEP
+      }
+    },
+    value: {
+      min: {
+        type: Number,
+        set: setValue
+      },
+      max: {
+        type: Number,
+        set: setValue
       }
     },
     condominium: {
       min: {
-        type: Number
+        type: Number,
+        set: setValue
       },
       max: {
-        type: Number
+        type: Number,
+        set: setValue
       }
     },
     iptu: {
       min: {
-        type: Number
+        type: Number,
+        set: setValue
       },
       max: {
-        type: Number
+        type: Number,
+        set: setValue
       }
     },
     location: {
       min: {
-        type: Number
+        type: Number,
+        set: setValue
       },
       max: {
-        type: Number
+        type: Number,
+        set: setValue
       }
     },
     hasSubway: {
@@ -240,7 +275,7 @@ PropertySchema.methods.fullAddress = function() {
   var address, obj;
   obj = this.toObject();
   address = obj.address.street + ', ';
-  address += obj.address.number + ' - ';
+  address += obj.address.number + ' setValue- ';
   address += obj.address.neighborhood + ', ';
   address += obj.address.city + ' - ';
   address += obj.address.state + ', ';
@@ -259,6 +294,40 @@ PropertySchema.methods.forUpdate = function() {
   }
   delete obj._id;
   return obj;
+};
+
+PropertySchema.methods.validateFields = function() {
+  var errors, obj;
+  obj = this.toObject();
+  errors = [];
+  if ((this.code == null) || typeof this.code !== 'string') {
+    errors.push('Code');
+  }
+  if ((this.type == null) || typeof this.type !== 'string') {
+    errors.push('Type');
+  }
+  if ((this.address.street == null) || typeof this.address.street !== 'string') {
+    errors.push('Street');
+  }
+  if ((this.address.number == null) || typeof this.address.number !== 'string') {
+    errors.push('Number');
+  }
+  if ((this.address.neighborhood == null) || typeof this.address.neighborhood !== 'string') {
+    errors.push('Neighborhood');
+  }
+  if ((this.address.city == null) || typeof this.address.city !== 'string') {
+    errors.push('City');
+  }
+  if ((this.address.state == null) || typeof this.address.state !== 'string') {
+    errors.push('State');
+  }
+  if ((this.address.cep == null) || this.address.cep === '') {
+    errors.push('CEP');
+  }
+  if ((this.value == null) || this.value === '') {
+    errors.push('Value');
+  }
+  return errors;
 };
 
 module.exports = mongoose.model('Property', PropertySchema);
