@@ -36,11 +36,11 @@ fs = require('fs');
 csv = require('fast-csv');
 
 router.get('/', auth.isAuthenticated, function(req, res) {
-  return Property.find(function(err, propertysFound) {
+  return Property.find(function(err, propertiesFound) {
     if (err) {
       return res["with"](res.type.dbError, err);
     }
-    return res["with"](propertysFound);
+    return res["with"](propertiesFound);
   });
 });
 

@@ -19,9 +19,9 @@ csv = require 'fast-csv'
 
 # GET ALL PROPERTIES
 router.get '/', auth.isAuthenticated, (req, res) ->
-  Property.find  (err, propertysFound) ->
+  Property.find  (err, propertiesFound) ->
     return res.with(res.type.dbError, err) if err
-    res.with(propertysFound)
+    res.with(propertiesFound)
 
 # GET SPECIFIC PROPERTY
 router.get '/:id', auth.isAuthenticated, (req, res) ->

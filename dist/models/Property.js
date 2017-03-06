@@ -275,7 +275,7 @@ PropertySchema.methods.fullAddress = function() {
   var address, obj;
   obj = this.toObject();
   address = obj.address.street + ', ';
-  address += obj.address.number + ' setValue- ';
+  address += obj.address.number + ' - ';
   address += obj.address.neighborhood + ', ';
   address += obj.address.city + ' - ';
   address += obj.address.state + ', ';
@@ -328,6 +328,360 @@ PropertySchema.methods.validateFields = function() {
     errors.push('Value');
   }
   return errors;
+};
+
+PropertySchema.methods.generatePropertyQuery = function(reqQuery) {
+  var newQuery, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7;
+  newQuery = {};
+  newQuery.interest = {};
+  if (reqQuery.property.type != null) {
+    newQuery.type = {
+      $or: reqQuery.property.type
+    };
+  }
+  if (reqQuery.property.meters != null) {
+    newQuery.meters = {
+      $gte: reqQuery.property.meters.min,
+      $lte: reqQuery.property.meters.max
+    };
+  }
+  if (reqQuery.property.vacancy != null) {
+    newQuery.vacancy = {
+      $gte: reqQuery.property.vacancy.min,
+      $lte: reqQuery.property.vacancy.max
+    };
+  }
+  if (reqQuery.property.floor != null) {
+    newQuery.floor = {
+      $gte: reqQuery.property.floor.min,
+      $lte: reqQuery.property.floor.max
+    };
+  }
+  if (((ref = reqQuery.property.address) != null ? ref.street : void 0) != null) {
+    newQuery.address.street = new RegExp('^' + reqQuery.property.address.street + '$', "i");
+  }
+  if (((ref1 = reqQuery.property.address) != null ? ref1.number : void 0) != null) {
+    newQuery.address.number = new RegExp('^' + reqQuery.property.address.number + '$', "i");
+  }
+  if (((ref2 = reqQuery.property.address) != null ? ref2.neighborhood : void 0) != null) {
+    newQuery.address.neighborhood = new RegExp('^' + reqQuery.property.address.neighborhood + '$', "i");
+  }
+  if (((ref3 = reqQuery.property.address) != null ? ref3.city : void 0) != null) {
+    newQuery.address.city = reqQuery.property.address.city;
+  }
+  if (reqQuery.property.hasSubway != null) {
+    newQuery.hasSubway = reqQuery.property.hasSubway;
+  }
+  if (reqQuery.property.subwayStation != null) {
+    newQuery.subwayStation = reqQuery.property.subwayStation;
+  }
+  if (reqQuery.property.value != null) {
+    newQuery.value = {
+      $gte: reqQuery.property.value.min,
+      $lte: reqQuery.property.value.max
+    };
+  }
+  if (reqQuery.property.condominium != null) {
+    newQuery.condominium = {
+      $gte: reqQuery.property.condominium.min,
+      $lte: reqQuery.property.condominium.max
+    };
+  }
+  if (reqQuery.property.iptu != null) {
+    newQuery.iptu = {
+      $gte: reqQuery.property.iptu.min,
+      $lte: reqQuery.property.iptu.max
+    };
+  }
+  if (reqQuery.property.location != null) {
+    newQuery.location = {
+      $gte: reqQuery.property.location.min,
+      $lte: reqQuery.property.location.max
+    };
+  }
+  if (reqQuery.property.payments != null) {
+    newQuery.payments = {
+      $in: reqQuery.property.payments
+    };
+  }
+  if (reqQuery.property.exchange != null) {
+    newQuery.exchange = reqQuery.property.exchange;
+  }
+  if (reqQuery.property.settled != null) {
+    newQuery.settled = reqQuery.property.settled;
+  }
+  if (reqQuery.property.difference != null) {
+    newQuery.difference = reqQuery.property.difference;
+  }
+  if (reqQuery.property.car != null) {
+    newQuery.car = reqQuery.property.car;
+  }
+  if (reqQuery.property.carValue != null) {
+    newQuery.carValue = reqQuery.property.carValue;
+  }
+  if (reqQuery.interest.type != null) {
+    newQuery.interest.type = {
+      $or: reqQuery.interest.type
+    };
+  }
+  if (reqQuery.interest.meters != null) {
+    newQuery.interest.meters = {
+      $gte: reqQuery.interest.meters.min,
+      $lte: reqQuery.interest.meters.max
+    };
+  }
+  if (reqQuery.interest.vacancy != null) {
+    newQuery.interest.vacancy = {
+      $gte: reqQuery.interest.vacancy.min,
+      $lte: reqQuery.interest.vacancy.max
+    };
+  }
+  if (reqQuery.interest.floor != null) {
+    newQuery.interest.floor = {
+      $gte: reqQuery.interest.floor.min,
+      $lte: reqQuery.interest.floor.max
+    };
+  }
+  if (((ref4 = reqQuery.interest.address) != null ? ref4.street : void 0) != null) {
+    newQuery.interest.address.street = new RegExp('^' + reqQuery.interest.address.street + '$', "i");
+  }
+  if (((ref5 = reqQuery.interest.address) != null ? ref5.number : void 0) != null) {
+    newQuery.interest.address.number = new RegExp('^' + reqQuery.interest.address.number + '$', "i");
+  }
+  if (((ref6 = reqQuery.interest.address) != null ? ref6.neighborhood : void 0) != null) {
+    newQuery.interest.address.neighborhood = new RegExp('^' + reqQuery.interest.address.neighborhood + '$', "i");
+  }
+  if (((ref7 = reqQuery.interest.address) != null ? ref7.city : void 0) != null) {
+    newQuery.interest.address.city = reqQuery.interest.address.city;
+  }
+  if (reqQuery.interest.hasSubway != null) {
+    newQuery.interest.hasSubway = reqQuery.interest.hasSubway;
+  }
+  if (reqQuery.interest.subwayStation != null) {
+    newQuery.interest.subwayStation = reqQuery.interest.subwayStation;
+  }
+  if (reqQuery.interest.value != null) {
+    newQuery.interest.value = {
+      $gte: reqQuery.interest.value.min,
+      $lte: reqQuery.interest.value.max
+    };
+  }
+  if (reqQuery.interest.condominium != null) {
+    newQuery.interest.condominium = {
+      $gte: reqQuery.interest.condominium.min,
+      $lte: reqQuery.interest.condominium.max
+    };
+  }
+  if (reqQuery.interest.iptu != null) {
+    newQuery.interest.iptu = {
+      $gte: reqQuery.interest.iptu.min,
+      $lte: reqQuery.interest.iptu.max
+    };
+  }
+  if (reqQuery.interest.location != null) {
+    newQuery.interest.location = {
+      $gte: reqQuery.interest.location.min,
+      $lte: reqQuery.interest.location.max
+    };
+  }
+  if (reqQuery.interest.payments != null) {
+    newQuery.interest.payments = {
+      $in: reqQuery.interest.payments
+    };
+  }
+  if (reqQuery.interest.exchange != null) {
+    newQuery.interest.exchange = reqQuery.interest.exchange;
+  }
+  if (reqQuery.interest.settled != null) {
+    newQuery.interest.settled = reqQuery.interest.settled;
+  }
+  if (reqQuery.interest.difference != null) {
+    newQuery.interest.difference = reqQuery.interest.difference;
+  }
+  if (reqQuery.interest.car != null) {
+    newQuery.interest.car = reqQuery.interest.car;
+  }
+  if (reqQuery.interest.carValue != null) {
+    newQuery.interest.carValue = reqQuery.interest.carValue;
+  }
+  return newQuery;
+};
+
+PropertySchema.methods.generateInterestQuery = function(reqQuery) {
+  var newQuery, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7;
+  newQuery = {};
+  newQuery.interest = {};
+  if (reqQuery.property.type != null) {
+    newQuery.interest.type = {
+      $or: reqQuery.property.type
+    };
+  }
+  if (reqQuery.property.meters != null) {
+    newQuery.interest.meters = {
+      $gte: reqQuery.property.meters.min,
+      $lte: reqQuery.property.meters.max
+    };
+  }
+  if (reqQuery.property.vacancy != null) {
+    newQuery.interest.vacancy = {
+      $gte: reqQuery.property.vacancy.min,
+      $lte: reqQuery.property.vacancy.max
+    };
+  }
+  if (reqQuery.property.floor != null) {
+    newQuery.interest.floor = {
+      $gte: reqQuery.property.floor.min,
+      $lte: reqQuery.property.floor.max
+    };
+  }
+  if (((ref = reqQuery.property.address) != null ? ref.street : void 0) != null) {
+    newQuery.interest.address.street = new RegExp('^' + reqQuery.property.address.street + '$', "i");
+  }
+  if (((ref1 = reqQuery.property.address) != null ? ref1.number : void 0) != null) {
+    newQuery.interest.address.number = new RegExp('^' + reqQuery.property.address.number + '$', "i");
+  }
+  if (((ref2 = reqQuery.property.address) != null ? ref2.neighborhood : void 0) != null) {
+    newQuery.interest.address.neighborhood = new RegExp('^' + reqQuery.property.address.neighborhood + '$', "i");
+  }
+  if (((ref3 = reqQuery.property.address) != null ? ref3.city : void 0) != null) {
+    newQuery.interest.address.city = reqQuery.property.address.city;
+  }
+  if (reqQuery.property.hasSubway != null) {
+    newQuery.interest.hasSubway = reqQuery.property.hasSubway;
+  }
+  if (reqQuery.property.subwayStation != null) {
+    newQuery.interest.subwayStation = reqQuery.property.subwayStation;
+  }
+  if (reqQuery.property.value != null) {
+    newQuery.interest.value = {
+      $gte: reqQuery.property.value.min,
+      $lte: reqQuery.property.value.max
+    };
+  }
+  if (reqQuery.property.condominium != null) {
+    newQuery.interest.condominium = {
+      $gte: reqQuery.property.condominium.min,
+      $lte: reqQuery.property.condominium.max
+    };
+  }
+  if (reqQuery.property.iptu != null) {
+    newQuery.interest.iptu = {
+      $gte: reqQuery.property.iptu.min,
+      $lte: reqQuery.property.iptu.max
+    };
+  }
+  if (reqQuery.property.location != null) {
+    newQuery.interest.location = {
+      $gte: reqQuery.property.location.min,
+      $lte: reqQuery.property.location.max
+    };
+  }
+  if (reqQuery.property.payments != null) {
+    newQuery.interest.payments = {
+      $in: reqQuery.property.payments
+    };
+  }
+  if (reqQuery.property.exchange != null) {
+    newQuery.interest.exchange = reqQuery.property.exchange;
+  }
+  if (reqQuery.property.settled != null) {
+    newQuery.interest.settled = reqQuery.property.settled;
+  }
+  if (reqQuery.property.difference != null) {
+    newQuery.interest.difference = reqQuery.property.difference;
+  }
+  if (reqQuery.property.car != null) {
+    newQuery.interest.car = reqQuery.property.car;
+  }
+  if (reqQuery.property.carValue != null) {
+    newQuery.interest.carValue = reqQuery.property.carValue;
+  }
+  if (reqQuery.interest.type != null) {
+    newQuery.interest.type = {
+      $or: reqQuery.interest.type
+    };
+  }
+  if (reqQuery.interest.meters != null) {
+    newQuery.meters = {
+      $gte: reqQuery.interest.meters.min,
+      $lte: reqQuery.interest.meters.max
+    };
+  }
+  if (reqQuery.interest.vacancy != null) {
+    newQuery.vacancy = {
+      $gte: reqQuery.interest.vacancy.min,
+      $lte: reqQuery.interest.vacancy.max
+    };
+  }
+  if (reqQuery.interest.floor != null) {
+    newQuery.floor = {
+      $gte: reqQuery.interest.floor.min,
+      $lte: reqQuery.interest.floor.max
+    };
+  }
+  if (((ref4 = reqQuery.interest.address) != null ? ref4.street : void 0) != null) {
+    newQuery.address.street = new RegExp('^' + reqQuery.interest.address.street + '$', "i");
+  }
+  if (((ref5 = reqQuery.interest.address) != null ? ref5.number : void 0) != null) {
+    newQuery.address.number = new RegExp('^' + reqQuery.interest.address.number + '$', "i");
+  }
+  if (((ref6 = reqQuery.interest.address) != null ? ref6.neighborhood : void 0) != null) {
+    newQuery.address.neighborhood = new RegExp('^' + reqQuery.interest.address.neighborhood + '$', "i");
+  }
+  if (((ref7 = reqQuery.interest.address) != null ? ref7.city : void 0) != null) {
+    newQuery.address.city = reqQuery.interest.address.city;
+  }
+  if (reqQuery.interest.hasSubway != null) {
+    newQuery.hasSubway = reqQuery.interest.hasSubway;
+  }
+  if (reqQuery.interest.subwayStation != null) {
+    newQuery.subwayStation = reqQuery.interest.subwayStation;
+  }
+  if (reqQuery.interest.value != null) {
+    newQuery.value = {
+      $gte: reqQuery.interest.value.min,
+      $lte: reqQuery.interest.value.max
+    };
+  }
+  if (reqQuery.interest.condominium != null) {
+    newQuery.condominium = {
+      $gte: reqQuery.interest.condominium.min,
+      $lte: reqQuery.interest.condominium.max
+    };
+  }
+  if (reqQuery.interest.iptu != null) {
+    newQuery.iptu = {
+      $gte: reqQuery.interest.iptu.min,
+      $lte: reqQuery.interest.iptu.max
+    };
+  }
+  if (reqQuery.interest.location != null) {
+    newQuery.location = {
+      $gte: reqQuery.interest.location.min,
+      $lte: reqQuery.interest.location.max
+    };
+  }
+  if (reqQuery.interest.payments != null) {
+    newQuery.payments = {
+      $in: reqQuery.interest.payments
+    };
+  }
+  if (reqQuery.interest.exchange != null) {
+    newQuery.exchange = reqQuery.interest.exchange;
+  }
+  if (reqQuery.interest.settled != null) {
+    newQuery.settled = reqQuery.interest.settled;
+  }
+  if (reqQuery.interest.difference != null) {
+    newQuery.difference = reqQuery.interest.difference;
+  }
+  if (reqQuery.interest.car != null) {
+    newQuery.car = reqQuery.interest.car;
+  }
+  if (reqQuery.interest.carValue != null) {
+    newQuery.carValue = reqQuery.interest.carValue;
+  }
+  return newQuery;
 };
 
 module.exports = mongoose.model('Property', PropertySchema);

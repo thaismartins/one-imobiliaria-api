@@ -94,7 +94,7 @@ PropertySchema.methods.withoutId = () ->
 PropertySchema.methods.fullAddress = () ->
   obj = this.toObject()
   address = obj.address.street + ', '
-  address += obj.address.number + ' setValue- '
+  address += obj.address.number + ' - '
   address += obj.address.neighborhood + ', '
   address += obj.address.city + ' - '
   address += obj.address.state + ', '
@@ -125,6 +125,263 @@ PropertySchema.methods.validateFields = () ->
 
   return errors
 
+
+PropertySchema.methods.generatePropertyQuery = (reqQuery) ->
+
+  newQuery = {}
+  newQuery.interest = {}
+
+  if reqQuery.property.type?
+    newQuery.type = {$or: reqQuery.property.type}
+
+  if reqQuery.property.meters?
+    newQuery.meters = {$gte: reqQuery.property.meters.min, $lte: reqQuery.property.meters.max}
+
+  if reqQuery.property.vacancy?
+    newQuery.vacancy = {$gte: reqQuery.property.vacancy.min, $lte: reqQuery.property.vacancy.max}
+
+  if reqQuery.property.floor?
+    newQuery.floor = {$gte: reqQuery.property.floor.min, $lte: reqQuery.property.floor.max}
+
+  if reqQuery.property.address?.street?
+    newQuery.address.street = new RegExp('^' + reqQuery.property.address.street + '$', "i")
+
+  if reqQuery.property.address?.number?
+    newQuery.address.number = new RegExp('^' + reqQuery.property.address.number + '$', "i")
+
+  if reqQuery.property.address?.neighborhood?
+    newQuery.address.neighborhood = new RegExp('^' + reqQuery.property.address.neighborhood + '$', "i")
+
+  if reqQuery.property.address?.city?
+    newQuery.address.city = reqQuery.property.address.city
+
+  if reqQuery.property.hasSubway?
+    newQuery.hasSubway = reqQuery.property.hasSubway
+
+  if reqQuery.property.subwayStation?
+    newQuery.subwayStation = reqQuery.property.subwayStation
+
+  if reqQuery.property.value?
+    newQuery.value = {$gte: reqQuery.property.value.min, $lte: reqQuery.property.value.max}
+
+  if reqQuery.property.condominium?
+    newQuery.condominium = {$gte: reqQuery.property.condominium.min, $lte: reqQuery.property.condominium.max}
+
+  if reqQuery.property.iptu?
+    newQuery.iptu = {$gte: reqQuery.property.iptu.min, $lte: reqQuery.property.iptu.max}
+
+  if reqQuery.property.location?
+    newQuery.location = {$gte: reqQuery.property.location.min, $lte: reqQuery.property.location.max}
+
+  if reqQuery.property.payments?
+    newQuery.payments = {$in: reqQuery.property.payments}
+
+  if reqQuery.property.exchange?
+    newQuery.exchange = reqQuery.property.exchange
+
+  if reqQuery.property.settled?
+    newQuery.settled = reqQuery.property.settled
+
+  if reqQuery.property.difference?
+    newQuery.difference = reqQuery.property.difference
+
+  if reqQuery.property.car?
+    newQuery.car = reqQuery.property.car
+
+  if reqQuery.property.carValue?
+    newQuery.carValue = reqQuery.property.carValue
+
+  # Building query for interest property
+  if reqQuery.interest.type?
+    newQuery.interest.type = {$or: reqQuery.interest.type}
+
+  if reqQuery.interest.meters?
+    newQuery.interest.meters = {$gte: reqQuery.interest.meters.min, $lte: reqQuery.interest.meters.max}
+
+  if reqQuery.interest.vacancy?
+    newQuery.interest.vacancy = {$gte: reqQuery.interest.vacancy.min, $lte: reqQuery.interest.vacancy.max}
+
+  if reqQuery.interest.floor?
+    newQuery.interest.floor = {$gte: reqQuery.interest.floor.min, $lte: reqQuery.interest.floor.max}
+
+  if reqQuery.interest.address?.street?
+    newQuery.interest.address.street = new RegExp('^' + reqQuery.interest.address.street + '$', "i")
+
+  if reqQuery.interest.address?.number?
+    newQuery.interest.address.number = new RegExp('^' + reqQuery.interest.address.number + '$', "i")
+
+  if reqQuery.interest.address?.neighborhood?
+    newQuery.interest.address.neighborhood = new RegExp('^' + reqQuery.interest.address.neighborhood + '$', "i")
+
+  if reqQuery.interest.address?.city?
+    newQuery.interest.address.city = reqQuery.interest.address.city
+
+  if reqQuery.interest.hasSubway?
+    newQuery.interest.hasSubway = reqQuery.interest.hasSubway
+
+  if reqQuery.interest.subwayStation?
+    newQuery.interest.subwayStation = reqQuery.interest.subwayStation
+
+  if reqQuery.interest.value?
+    newQuery.interest.value = {$gte: reqQuery.interest.value.min, $lte: reqQuery.interest.value.max}
+
+  if reqQuery.interest.condominium?
+    newQuery.interest.condominium = {$gte: reqQuery.interest.condominium.min, $lte: reqQuery.interest.condominium.max}
+
+  if reqQuery.interest.iptu?
+    newQuery.interest.iptu = {$gte: reqQuery.interest.iptu.min, $lte: reqQuery.interest.iptu.max}
+
+  if reqQuery.interest.location?
+    newQuery.interest.location = {$gte: reqQuery.interest.location.min, $lte: reqQuery.interest.location.max}
+
+  if reqQuery.interest.payments?
+    newQuery.interest.payments = {$in: reqQuery.interest.payments}
+
+  if reqQuery.interest.exchange?
+    newQuery.interest.exchange = reqQuery.interest.exchange
+
+  if reqQuery.interest.settled?
+    newQuery.interest.settled = reqQuery.interest.settled
+
+  if reqQuery.interest.difference?
+    newQuery.interest.difference = reqQuery.interest.difference
+
+  if reqQuery.interest.car?
+    newQuery.interest.car = reqQuery.interest.car
+
+  if reqQuery.interest.carValue?
+    newQuery.interest.carValue = reqQuery.interest.carValue
+
+  return newQuery
+
+
+PropertySchema.methods.generateInterestQuery = (reqQuery) ->
+
+  newQuery = {}
+  newQuery.interest = {}
+
+  if reqQuery.property.type?
+    newQuery.interest.type = {$or: reqQuery.property.type}
+
+  if reqQuery.property.meters?
+    newQuery.interest.meters = {$gte: reqQuery.property.meters.min, $lte: reqQuery.property.meters.max}
+
+  if reqQuery.property.vacancy?
+    newQuery.interest.vacancy = {$gte: reqQuery.property.vacancy.min, $lte: reqQuery.property.vacancy.max}
+
+  if reqQuery.property.floor?
+    newQuery.interest.floor = {$gte: reqQuery.property.floor.min, $lte: reqQuery.property.floor.max}
+
+  if reqQuery.property.address?.street?
+    newQuery.interest.address.street = new RegExp('^' + reqQuery.property.address.street + '$', "i")
+
+  if reqQuery.property.address?.number?
+    newQuery.interest.address.number = new RegExp('^' + reqQuery.property.address.number + '$', "i")
+
+  if reqQuery.property.address?.neighborhood?
+    newQuery.interest.address.neighborhood = new RegExp('^' + reqQuery.property.address.neighborhood + '$', "i")
+
+  if reqQuery.property.address?.city?
+    newQuery.interest.address.city = reqQuery.property.address.city
+
+  if reqQuery.property.hasSubway?
+    newQuery.interest.hasSubway = reqQuery.property.hasSubway
+
+  if reqQuery.property.subwayStation?
+    newQuery.interest.subwayStation = reqQuery.property.subwayStation
+
+  if reqQuery.property.value?
+    newQuery.interest.value = {$gte: reqQuery.property.value.min, $lte: reqQuery.property.value.max}
+
+  if reqQuery.property.condominium?
+    newQuery.interest.condominium = {$gte: reqQuery.property.condominium.min, $lte: reqQuery.property.condominium.max}
+
+  if reqQuery.property.iptu?
+    newQuery.interest.iptu = {$gte: reqQuery.property.iptu.min, $lte: reqQuery.property.iptu.max}
+
+  if reqQuery.property.location?
+    newQuery.interest.location = {$gte: reqQuery.property.location.min, $lte: reqQuery.property.location.max}
+
+  if reqQuery.property.payments?
+    newQuery.interest.payments = {$in: reqQuery.property.payments}
+
+  if reqQuery.property.exchange?
+    newQuery.interest.exchange = reqQuery.property.exchange
+
+  if reqQuery.property.settled?
+    newQuery.interest.settled = reqQuery.property.settled
+
+  if reqQuery.property.difference?
+    newQuery.interest.difference = reqQuery.property.difference
+
+  if reqQuery.property.car?
+    newQuery.interest.car = reqQuery.property.car
+
+  if reqQuery.property.carValue?
+    newQuery.interest.carValue = reqQuery.property.carValue
+
+  # Building query for interest property
+  if reqQuery.interest.type?
+    newQuery.interest.type = {$or: reqQuery.interest.type}
+
+  if reqQuery.interest.meters?
+    newQuery.meters = {$gte: reqQuery.interest.meters.min, $lte: reqQuery.interest.meters.max}
+
+  if reqQuery.interest.vacancy?
+    newQuery.vacancy = {$gte: reqQuery.interest.vacancy.min, $lte: reqQuery.interest.vacancy.max}
+
+  if reqQuery.interest.floor?
+    newQuery.floor = {$gte: reqQuery.interest.floor.min, $lte: reqQuery.interest.floor.max}
+
+  if reqQuery.interest.address?.street?
+    newQuery.address.street = new RegExp('^' + reqQuery.interest.address.street + '$', "i")
+
+  if reqQuery.interest.address?.number?
+    newQuery.address.number = new RegExp('^' + reqQuery.interest.address.number + '$', "i")
+
+  if reqQuery.interest.address?.neighborhood?
+    newQuery.address.neighborhood = new RegExp('^' + reqQuery.interest.address.neighborhood + '$', "i")
+
+  if reqQuery.interest.address?.city?
+    newQuery.address.city = reqQuery.interest.address.city
+
+  if reqQuery.interest.hasSubway?
+    newQuery.hasSubway = reqQuery.interest.hasSubway
+
+  if reqQuery.interest.subwayStation?
+    newQuery.subwayStation = reqQuery.interest.subwayStation
+
+  if reqQuery.interest.value?
+    newQuery.value = {$gte: reqQuery.interest.value.min, $lte: reqQuery.interest.value.max}
+
+  if reqQuery.interest.condominium?
+    newQuery.condominium = {$gte: reqQuery.interest.condominium.min, $lte: reqQuery.interest.condominium.max}
+
+  if reqQuery.interest.iptu?
+    newQuery.iptu = {$gte: reqQuery.interest.iptu.min, $lte: reqQuery.interest.iptu.max}
+
+  if reqQuery.interest.location?
+    newQuery.location = {$gte: reqQuery.interest.location.min, $lte: reqQuery.interest.location.max}
+
+  if reqQuery.interest.payments?
+    newQuery.payments = {$in: reqQuery.interest.payments}
+
+  if reqQuery.interest.exchange?
+    newQuery.exchange = reqQuery.interest.exchange
+
+  if reqQuery.interest.settled?
+    newQuery.settled = reqQuery.interest.settled
+
+  if reqQuery.interest.difference?
+    newQuery.difference = reqQuery.interest.difference
+
+  if reqQuery.interest.car?
+    newQuery.car = reqQuery.interest.car
+
+  if reqQuery.interest.carValue?
+    newQuery.carValue = reqQuery.interest.carValue
+
+  return newQuery
 
 
 module.exports = mongoose.model 'Property', PropertySchema
