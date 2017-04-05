@@ -101,7 +101,7 @@ router.post '/import/csv', auth.isAuthenticated, upload.single('csv'), (req, res
     client.name = data[1]
     client.email = data[2]
     client.phones = {}
-    client.phones.cell = data[4] if data[4]? and data[4] != ''
+    client.phones.cell = data[4]
     client.phones.home = data[3] if data[3]? and data[3] != ''
     client.phones.commercial = data[5] if data[5]? and data[5] != ''
     client.created = new Date()

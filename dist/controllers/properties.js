@@ -146,9 +146,7 @@ router.post('/import/csv', auth.isAuthenticated, upload.single('csv'), function(
     client.name = data[1];
     client.email = data[2];
     client.phones = {};
-    if ((data[4] != null) && data[4] !== '') {
-      client.phones.cell = data[4];
-    }
+    client.phones.cell = data[4];
     if ((data[3] != null) && data[3] !== '') {
       client.phones.home = data[3];
     }
