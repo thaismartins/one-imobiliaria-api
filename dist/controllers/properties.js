@@ -94,9 +94,11 @@ router.post('/import/csv', auth.isAuthenticated, upload.single('csv'), function(
   errors = [];
   success = [];
   return csv.fromPath(req.file.path).validate(function(data, next) {
-    var client, clientErrors, property, propertyErrors, search, type;
+    var client, clientErrors, hasError, property, propertyErrors, search, type;
+    hasError = false;
     if (data[0] === 'codigo') {
       next(null, false);
+      hasError = true;
       return false;
     }
     type = '';
@@ -156,27 +158,33 @@ router.post('/import/csv', auth.isAuthenticated, upload.single('csv'), function(
     client.created = new Date();
     clientErrors = client.validateFields();
     if (clientErrors.length > 0) {
-      errors.push({
-        client: client,
-        property: property,
-        error: {
-          message: 'Error on validate client: ' + clientErrors.join(', '),
-          code: 3
-        }
-      });
+      if (!hasError) {
+        errors.push({
+          client: client,
+          property: property,
+          error: {
+            message: 'Error on validate client: ' + clientErrors.join(', '),
+            code: 3
+          }
+        });
+        hasError = true;
+      }
       next(null, false);
       return false;
     }
     propertyErrors = property.validateFields();
     if (propertyErrors.length > 0) {
-      errors.push({
-        client: client,
-        property: property,
-        error: {
-          message: 'Error on validate property: ' + propertyErrors.join(', '),
-          code: 3
-        }
-      });
+      if (!hasError) {
+        errors.push({
+          client: client,
+          property: property,
+          error: {
+            message: 'Error on validate property: ' + propertyErrors.join(', '),
+            code: 3
+          }
+        });
+        hasError = true;
+      }
       next(null, false);
       return false;
     }
@@ -203,33 +211,49 @@ router.post('/import/csv', auth.isAuthenticated, upload.single('csv'), function(
       $or: search
     }, function(err, clientFound) {
       if (err) {
-        console.log(err);
+        if (!hasError) {
+          errors.push({
+            client: client,
+            property: property,
+            error: {
+              message: 'Error on find client',
+              code: 2
+            }
+          });
+          hasError = true;
+        }
         next(null, false);
         return false;
       }
       if (clientFound) {
-        errors.push({
-          client: clientFound,
-          property: property,
-          error: {
-            message: 'Client exists',
-            code: 1
-          }
-        });
+        if (!hasError) {
+          errors.push({
+            client: clientFound,
+            property: property,
+            error: {
+              message: 'Client exists',
+              code: 1
+            }
+          });
+          hasError = true;
+        }
         next(null, false);
         return false;
       } else {
         return geocoder.geocode(property.fullAddress()).then(function(points) {
           var ref;
           if (points.length < 1 || (points[0] == null) || (points[0].latitude == null) || (((ref = points[0]) != null ? ref.longitude : void 0) == null)) {
-            errors.push({
-              client: clientFound,
-              property: property,
-              error: {
-                message: 'Error on find latitude and longitude property',
-                code: 4
-              }
-            });
+            if (!hasError) {
+              errors.push({
+                client: clientFound,
+                property: property,
+                error: {
+                  message: 'Error on find latitude and longitude property',
+                  code: 4
+                }
+              });
+              hasError = true;
+            }
             next(null, false);
             return false;
           }
@@ -237,30 +261,33 @@ router.post('/import/csv', auth.isAuthenticated, upload.single('csv'), function(
           property.address.lng = points[0].longitude;
           return client.save(function(err, clientSaved) {
             if (err) {
-              console.log(err);
-              errors.push({
-                client: client,
-                property: property,
-                error: {
-                  message: 'Error on save client',
-                  code: 2
-                }
-              });
+              if (!hasError) {
+                errors.push({
+                  client: client,
+                  property: property,
+                  error: {
+                    message: 'Error on save client',
+                    code: 2
+                  }
+                });
+                hasError = true;
+              }
               next(null, false);
               return false;
             }
             property.client = clientSaved._id;
             return property.save(function(err, propertySaved) {
               if (err) {
-                console.log(err);
-                errors.push({
-                  client: clientSaved,
-                  property: property,
-                  error: {
-                    message: 'Error on save property',
-                    code: 3
-                  }
-                });
+                if (!hasError) {
+                  errors.push({
+                    client: clientSaved,
+                    property: property,
+                    error: {
+                      message: 'Error on save property',
+                      code: 3
+                    }
+                  });
+                }
                 next(null, false);
                 return false;
               }
@@ -276,7 +303,7 @@ router.post('/import/csv', auth.isAuthenticated, upload.single('csv'), function(
       }
     });
   }).on('data', function(data) {
-    return console.log('Entrou data');
+    return console.log('Data OK');
   }).on('end', function() {
     console.log('Imported successfully');
     return res["with"](res.type.importedSuccess, {

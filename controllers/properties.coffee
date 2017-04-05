@@ -59,8 +59,10 @@ router.post '/import/csv', auth.isAuthenticated, upload.single('csv'), (req, res
   csv
   .fromPath(req.file.path)
   .validate (data, next) ->
+    hasError = false
     if data[0] == 'codigo'
       next(null, false)
+      hasError = true
       return false
 
     type = ''
@@ -106,23 +108,27 @@ router.post '/import/csv', auth.isAuthenticated, upload.single('csv'), (req, res
 
     clientErrors = client.validateFields()
     if clientErrors.length > 0
-      errors.push
-        client: client
-        property: property
-        error:
-          message: 'Error on validate client: ' + clientErrors.join(', ')
-          code: 3
+      if not hasError
+        errors.push
+          client: client
+          property: property
+          error:
+            message: 'Error on validate client: ' + clientErrors.join(', ')
+            code: 3
+        hasError = true
       next(null, false)
       return false
 
     propertyErrors = property.validateFields()
     if propertyErrors.length > 0
-      errors.push
-        client: client
-        property: property
-        error:
-          message: 'Error on validate property: ' + propertyErrors.join(', ')
-          code: 3
+      if not hasError
+        errors.push
+          client: client
+          property: property
+          error:
+            message: 'Error on validate property: ' + propertyErrors.join(', ')
+            code: 3
+        hasError = true
       next(null, false)
       return false
 
@@ -134,28 +140,39 @@ router.post '/import/csv', auth.isAuthenticated, upload.single('csv'), (req, res
 
     Client.findOne {$or: search}, (err, clientFound) ->
       if err
-        console.log(err);
+        if not hasError
+          errors.push
+            client: client
+            property: property
+            error:
+              message: 'Error on find client'
+              code: 2
+          hasError = true
         next(null, false)
         return false
       if clientFound
-        errors.push
-          client: clientFound
-          property: property
-          error:
-            message: 'Client exists'
-            code: 1
+        if not hasError
+          errors.push
+            client: clientFound
+            property: property
+            error:
+              message: 'Client exists'
+              code: 1
+          hasError = true
         next(null, false)
         return false
       else
         geocoder.geocode(property.fullAddress())
         .then (points) ->
           if points.length < 1 or not points[0]? or not points[0].latitude? or not points[0]?.longitude?
-            errors.push
-              client: clientFound
-              property: property
-              error:
-                message: 'Error on find latitude and longitude property'
-                code: 4
+            if not hasError
+              errors.push
+                client: clientFound
+                property: property
+                error:
+                  message: 'Error on find latitude and longitude property'
+                  code: 4
+              hasError = true
             next(null, false)
             return false
           property.address.lat = points[0].latitude
@@ -163,25 +180,26 @@ router.post '/import/csv', auth.isAuthenticated, upload.single('csv'), (req, res
 
           client.save (err, clientSaved) ->
             if err
-              console.log(err);
-              errors.push
-                client: client
-                property: property
-                error:
-                  message: 'Error on save client'
-                  code: 2
+              if not hasError
+                errors.push
+                  client: client
+                  property: property
+                  error:
+                    message: 'Error on save client'
+                    code: 2
+                hasError = true
               next(null, false)
               return false
             property.client = clientSaved._id
             property.save (err, propertySaved) ->
               if err
-                console.log(err);
-                errors.push
-                  client: clientSaved
-                  property: property
-                  error:
-                    message: 'Error on save property'
-                    code: 3
+                if not hasError
+                  errors.push
+                    client: clientSaved
+                    property: property
+                    error:
+                      message: 'Error on save property'
+                      code: 3
                 next(null, false)
                 return false
               success.push
@@ -190,7 +208,7 @@ router.post '/import/csv', auth.isAuthenticated, upload.single('csv'), (req, res
               next(null, true)
               return true
   .on 'data', (data) ->
-    console.log('Entrou data');
+    console.log('Data OK');
   .on 'end', () ->
     console.log('Imported successfully')
     res.with(res.type.importedSuccess, {errors: errors, success: success})

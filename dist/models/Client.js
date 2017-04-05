@@ -65,7 +65,7 @@ ClientSchema.methods.validateFields = function() {
   if ((this.email == null) || typeof this.email !== 'string') {
     errors.push('Email');
   }
-  if ((this.tynamepe == null) || typeof this.name !== 'string') {
+  if ((this.name == null) || typeof this.name !== 'string') {
     errors.push('Name');
   }
   if ((this.phones.cell == null) || typeof this.phones.cell !== 'string') {

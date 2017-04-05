@@ -31,7 +31,7 @@ ClientSchema.methods.validateFields = () ->
   errors = []
 
   errors.push('Email') if not this.email? or typeof this.email isnt 'string'
-  errors.push('Name') if not this.tynamepe? or typeof this.name isnt 'string'
+  errors.push('Name') if not this.name? or typeof this.name isnt 'string'
   errors.push('Cellphone') if not this.phones.cell? or typeof this.phones.cell isnt 'string'
 
   return errors
