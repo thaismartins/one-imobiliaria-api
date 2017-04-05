@@ -33,7 +33,8 @@ setCEP = function(value) {
 PropertySchema = new Schema({
   type: {
     type: String,
-    required: true
+    required: true,
+    "enum": ['house', 'apartment', 'car', 'land', 'others']
   },
   code: {
     type: String,
@@ -74,10 +75,12 @@ PropertySchema = new Schema({
       set: setCEP
     },
     lat: {
-      type: String
+      type: String,
+      required: true
     },
     lng: {
-      type: String
+      type: String,
+      required: true
     }
   },
   floor: {
@@ -91,6 +94,9 @@ PropertySchema = new Schema({
   meters: {
     type: Number,
     set: setOnlyNumbers
+  },
+  broker: {
+    type: String
   },
   hasSubway: {
     type: Boolean
@@ -139,7 +145,7 @@ PropertySchema = new Schema({
     types: [
       {
         type: String,
-        "enum": ['house', 'apartment', 'car', 'others']
+        "enum": ['house', 'apartment', 'car', 'land', 'others']
       }
     ],
     meters: {
@@ -274,12 +280,21 @@ PropertySchema.methods.withoutId = function() {
 PropertySchema.methods.fullAddress = function() {
   var address, obj;
   obj = this.toObject();
-  address = obj.address.street + ', ';
-  address += obj.address.number + ' - ';
-  address += obj.address.neighborhood + ', ';
-  address += obj.address.city + ' - ';
-  address += obj.address.state + ', ';
-  address += obj.address.cep + ', Brazil';
+  if (obj.address.street != null) {
+    address = obj.address.street + ', ';
+  }
+  if ((obj.address.number != null) && obj.address.number > 0) {
+    address += obj.address.number + ' - ';
+  }
+  if (obj.address.city != null) {
+    address += obj.address.city + ' - ';
+  }
+  if (obj.address.state != null) {
+    address += obj.address.state + ', ';
+  }
+  if (obj.address.cep != null) {
+    address += obj.address.cep + ', Brazil';
+  }
   return address;
 };
 

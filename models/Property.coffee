@@ -94,12 +94,11 @@ PropertySchema.methods.withoutId = () ->
 
 PropertySchema.methods.fullAddress = () ->
   obj = this.toObject()
-  address = obj.address.street + ', '
-  address += obj.address.number + ' - '
-  address += obj.address.neighborhood + ', '
-  address += obj.address.city + ' - '
-  address += obj.address.state + ', '
-  address += obj.address.cep + ', Brazil'
+  address = obj.address.street + ', ' if obj.address.street?
+  address += obj.address.number + ' - ' if obj.address.number? and  obj.address.number > 0
+  address += obj.address.city + ' - ' if obj.address.city?
+  address += obj.address.state + ', ' if obj.address.state?
+  address += obj.address.cep + ', Brazil' if obj.address.cep?
   return address
 
 PropertySchema.methods.forUpdate = () ->

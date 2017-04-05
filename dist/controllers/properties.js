@@ -94,21 +94,25 @@ router.post('/import/csv', auth.isAuthenticated, upload.single('csv'), function(
   errors = [];
   success = [];
   return csv.fromPath(req.file.path).validate(function(data, next) {
-    var client, property, propertyErrors, search, type;
+    var client, clientErrors, property, propertyErrors, search, type;
     if (data[0] === 'codigo') {
-      return next(null, false);
+      next(null, false);
+      return false;
     }
     type = '';
     if (data[6] !== '') {
       switch (data[6].toLowerCase()) {
         case 'apartamento':
-          type = 'apart';
+          type = 'apartment';
           break;
         case 'casa':
           type = 'house';
           break;
         case 'carro':
           type = 'car';
+          break;
+        case 'terreno':
+          type = 'land';
           break;
         default:
           type = 'others';
@@ -131,50 +135,77 @@ router.post('/import/csv', auth.isAuthenticated, upload.single('csv'), function(
     property.condominium = data[19];
     property.iptu = data[20];
     property.location = data[21];
+    property.broker = data[22];
     if (data[17] !== '') {
       property.hasSubway = true;
       property.subwayStation = data[17];
     }
+    client = new Client();
+    client.name = data[1];
+    client.email = data[2];
+    client.phones = {};
+    if ((data[4] != null) && data[4] !== '') {
+      client.phones.cell = data[4];
+    }
+    if ((data[3] != null) && data[3] !== '') {
+      client.phones.home = data[3];
+    }
+    if ((data[5] != null) && data[5] !== '') {
+      client.phones.commercial = data[5];
+    }
+    client.created = new Date();
+    clientErrors = client.validateFields();
+    if (clientErrors.length > 0) {
+      errors.push({
+        client: client,
+        property: property,
+        error: {
+          message: 'Error on validate client: ' + clientErrors.join(', '),
+          code: 3
+        }
+      });
+      next(null, false);
+      return false;
+    }
     propertyErrors = property.validateFields();
-    console.log(propertyErrors);
     if (propertyErrors.length > 0) {
       errors.push({
-        client: {},
+        client: client,
         property: property,
         error: {
           message: 'Error on validate property: ' + propertyErrors.join(', '),
           code: 3
         }
       });
-      return next(null, false);
+      next(null, false);
+      return false;
     }
     search = [];
-    search[0] = {
+    search.push({
       'email': data[2]
-    };
-    search[1] = {
-      'phones.home': data[3]
-    };
-    search[2] = {
-      'phones.cell': data[4]
-    };
-    search[3] = {
-      'phones.commercial': data[5]
-    };
-    client = new Client();
-    client.name = data[1];
-    client.email = data[2];
-    client.phones = {
-      cell: data[4],
-      home: data[3],
-      commercial: data[5]
-    };
-    client.created = new Date();
+    });
+    if ((data[3] != null) && data[3] !== '') {
+      search.push({
+        'phones.home': data[3]
+      });
+    }
+    if ((data[4] != null) && data[4] !== '') {
+      search.push({
+        'phones.cell': data[4]
+      });
+    }
+    if ((data[5] != null) && data[5] !== '') {
+      search.push({
+        'phones.commercial': data[5]
+      });
+    }
     return Client.findOne({
       $or: search
     }, function(err, clientFound) {
       if (err) {
-        return next(err);
+        console.log(err);
+        next(null, false);
+        return false;
       }
       if (clientFound) {
         errors.push({
@@ -185,38 +216,61 @@ router.post('/import/csv', auth.isAuthenticated, upload.single('csv'), function(
             code: 1
           }
         });
-        return next(null, false);
+        next(null, false);
+        return false;
       } else {
-        return client.save(function(err, clientSaved) {
-          if (err) {
+        return geocoder.geocode(property.fullAddress()).then(function(points) {
+          var ref;
+          if (points.length < 1 || (points[0] == null) || (points[0].latitude == null) || (((ref = points[0]) != null ? ref.longitude : void 0) == null)) {
             errors.push({
               client: clientFound,
               property: property,
               error: {
-                message: 'Error on save client',
-                code: 2
+                message: 'Error on find latitude and longitude property',
+                code: 4
               }
             });
-            return next(err);
+            next(null, false);
+            return false;
           }
-          property.client = clientSaved._id;
-          return property.save(function(err, propertySaved) {
+          property.address.lat = points[0].latitude;
+          property.address.lng = points[0].longitude;
+          return client.save(function(err, clientSaved) {
             if (err) {
+              console.log(err);
               errors.push({
-                client: clientFound,
+                client: client,
                 property: property,
                 error: {
-                  message: 'Error on save property',
-                  code: 3
+                  message: 'Error on save client',
+                  code: 2
                 }
               });
-              return next(err);
+              next(null, false);
+              return false;
             }
-            success.push({
-              client: clientSaved,
-              property: propertySaved
+            property.client = clientSaved._id;
+            return property.save(function(err, propertySaved) {
+              if (err) {
+                console.log(err);
+                errors.push({
+                  client: clientSaved,
+                  property: property,
+                  error: {
+                    message: 'Error on save property',
+                    code: 3
+                  }
+                });
+                next(null, false);
+                return false;
+              }
+              success.push({
+                client: clientSaved,
+                property: propertySaved
+              });
+              next(null, true);
+              return true;
             });
-            return next(null, true);
           });
         });
       }

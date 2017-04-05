@@ -58,4 +58,20 @@ ClientSchema.methods.forUpdate = function() {
   return obj;
 };
 
+ClientSchema.methods.validateFields = function() {
+  var errors, obj;
+  obj = this.toObject();
+  errors = [];
+  if ((this.email == null) || typeof this.email !== 'string') {
+    errors.push('Email');
+  }
+  if ((this.tynamepe == null) || typeof this.name !== 'string') {
+    errors.push('Name');
+  }
+  if ((this.phones.cell == null) || typeof this.phones.cell !== 'string') {
+    errors.push('Cellphone');
+  }
+  return errors;
+};
+
 module.exports = mongoose.model('Client', ClientSchema);
