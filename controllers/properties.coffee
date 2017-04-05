@@ -67,6 +67,7 @@ router.post '/import/csv', auth.isAuthenticated, upload.single('csv'), (req, res
         when 'apartamento' then type = 'apart'
         when 'casa' then type = 'house'
         when 'carro' then type = 'car'
+        when 'terreno' then type = 'land'
         else type = 'others'
 
     property = new Property()
@@ -86,13 +87,13 @@ router.post '/import/csv', auth.isAuthenticated, upload.single('csv'), (req, res
     property.condominium = data[19]
     property.iptu = data[20]
     property.location = data[21]
+    property.broker = data[22]
 
     if data[17] != ''
       property.hasSubway = true
       property.subwayStation = data[17]
 
     propertyErrors = property.validateFields()
-    console.log(propertyErrors);
     if propertyErrors.length > 0
       errors.push
         client: {}
@@ -129,29 +130,42 @@ router.post '/import/csv', auth.isAuthenticated, upload.single('csv'), (req, res
             code: 1
         return next(null, false)
       else
-        client.save (err, clientSaved) ->
-          if err
+        geocoder.geocode(property.fullAddress())
+        .then (points) ->
+          if points.length > 0
             errors.push
               client: clientFound
               property: property
               error:
-                message: 'Error on save client'
-                code: 2
+                message: 'Error on find latitude and longitude property'
+                code: 3
             return next(err)
-          property.client = clientSaved._id
-          property.save (err, propertySaved) ->
+          property.address.lat = points[0].latitude
+          property.address.lng = points[0].longitude
+
+          client.save (err, clientSaved) ->
             if err
               errors.push
                 client: clientFound
                 property: property
                 error:
-                  message: 'Error on save property'
-                  code: 3
+                  message: 'Error on save client'
+                  code: 2
               return next(err)
-            success.push
-              client: clientSaved
-              property: propertySaved
-            next(null, true)
+            property.client = clientSaved._id
+            property.save (err, propertySaved) ->
+              if err
+                errors.push
+                  client: clientFound
+                  property: property
+                  error:
+                    message: 'Error on save property'
+                    code: 3
+                return next(err)
+              success.push
+                client: clientSaved
+                property: propertySaved
+              next(null, true)
   .on 'data', (data) ->
     console.log('Entrou data');
   .on 'end', () ->

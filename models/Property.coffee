@@ -19,7 +19,7 @@ setCEP = (value) ->
   return newValue.toString().slice(0, -3) + '-' + newValue.toString().slice(-3)
 
 PropertySchema = new Schema
-  type: type: String, required: true
+  type: type: String, required: true, enum: ['house', 'apartment', 'car', 'land', 'others']
   code: type: String, required: true
   client: type: Schema.Types.ObjectId, ref: 'Client', required: true
   address:
@@ -30,11 +30,12 @@ PropertySchema = new Schema
     city: type: String, required: true
     state: type: String, required: true
     cep: type: String, required: true, set: setCEP
-    lat: type: String
-    lng: type: String
+    lat: type: String, required: true
+    lng: type: String, required: true
   floor: type: Number, set: setOnlyNumbers
   vacancy: type: Number, set: setOnlyNumbers
   meters: type: Number, set: setOnlyNumbers
+  broker: type: String
   hasSubway: type: Boolean
   subwayStation: type: String
   value: type: Number, set: setValue
@@ -48,7 +49,7 @@ PropertySchema = new Schema
   car: type: Boolean
   carValue: type: Number
   interest:
-    types: [type: String, enum: ['house', 'apartment', 'car', 'others']],
+    types: [type: String, enum: ['house', 'apartment', 'car', 'land', 'others']],
     meters:
       min: type: Number, set: setOnlyNumbers
       max: type: Number, set: setOnlyNumbers
