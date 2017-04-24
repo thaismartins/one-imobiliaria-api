@@ -60,9 +60,8 @@ router.post '/import/csv', auth.isAuthenticated, upload.single('csv'), (req, res
   .fromPath(req.file.path)
   .validate (data, next) ->
     hasError = false
-    if data[0] == 'codigo'
+    if data[0] == 'codigo' or data[0] == ''
       next(null, false)
-      hasError = true
       return false
 
     type = ''
@@ -113,8 +112,9 @@ router.post '/import/csv', auth.isAuthenticated, upload.single('csv'), (req, res
           client: client
           property: property
           error:
-            message: 'Error on validate client: ' + clientErrors.join(', ')
-            code: 3
+            message: 'Error on validate client.'
+            fields: clientErrors.join(', ')
+            code: 5
         hasError = true
       next(null, false)
       return false
@@ -126,8 +126,9 @@ router.post '/import/csv', auth.isAuthenticated, upload.single('csv'), (req, res
           client: client
           property: property
           error:
-            message: 'Error on validate property: ' + propertyErrors.join(', ')
-            code: 3
+            message: 'Error on validate property.'
+            fields: propertyErrors.join(', ')
+            code: 6
         hasError = true
       next(null, false)
       return false
@@ -147,6 +148,7 @@ router.post '/import/csv', auth.isAuthenticated, upload.single('csv'), (req, res
             error:
               message: 'Error on find client'
               code: 2
+              fields: err
           hasError = true
         next(null, false)
         return false
@@ -167,7 +169,7 @@ router.post '/import/csv', auth.isAuthenticated, upload.single('csv'), (req, res
           if points.length < 1 or not points[0]? or not points[0].latitude? or not points[0]?.longitude?
             if not hasError
               errors.push
-                client: clientFound
+                client: client
                 property: property
                 error:
                   message: 'Error on find latitude and longitude property'
@@ -187,6 +189,7 @@ router.post '/import/csv', auth.isAuthenticated, upload.single('csv'), (req, res
                   error:
                     message: 'Error on save client'
                     code: 2
+                    fields: err
                 hasError = true
               next(null, false)
               return false
@@ -200,6 +203,7 @@ router.post '/import/csv', auth.isAuthenticated, upload.single('csv'), (req, res
                     error:
                       message: 'Error on save property'
                       code: 3
+                      fields: err
                 next(null, false)
                 return false
               success.push

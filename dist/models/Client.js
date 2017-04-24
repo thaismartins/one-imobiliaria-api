@@ -62,16 +62,22 @@ ClientSchema.methods.validateFields = function() {
   var errors, obj;
   obj = this.toObject();
   errors = [];
-  if ((this.email == null) || typeof this.email !== 'string') {
+  if (!this.validateEmail() || typeof this.email !== 'string') {
     errors.push('Email');
   }
-  if ((this.name == null) || typeof this.name !== 'string') {
-    errors.push('Name');
+  if ((this.name == null) || this.name === '' || typeof this.name !== 'string') {
+    errors.push('Nome');
   }
-  if ((this.phones.cell == null) || typeof this.phones.cell !== 'string') {
-    errors.push('Cellphone');
+  if ((this.phones.cell == null) || this.phones.cell === '' || typeof this.phones.cell !== 'string') {
+    errors.push('Celular');
   }
   return errors;
+};
+
+ClientSchema.methods.validateEmail = function() {
+  var re;
+  re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(this.email);
 };
 
 module.exports = mongoose.model('Client', ClientSchema);

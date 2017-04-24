@@ -316,31 +316,31 @@ PropertySchema.methods.validateFields = function() {
   obj = this.toObject();
   errors = [];
   if ((this.code == null) || typeof this.code !== 'string') {
-    errors.push('Code');
+    errors.push('Código');
   }
   if ((this.type == null) || typeof this.type !== 'string') {
-    errors.push('Type');
+    errors.push('Tipo de Imóvel');
   }
   if ((this.address.street == null) || typeof this.address.street !== 'string') {
-    errors.push('Street');
+    errors.push('Rua');
   }
   if ((this.address.number == null) || typeof this.address.number !== 'string') {
-    errors.push('Number');
+    errors.push('Número (Endereço)');
   }
   if ((this.address.neighborhood == null) || typeof this.address.neighborhood !== 'string') {
-    errors.push('Neighborhood');
+    errors.push('Bairro');
   }
   if ((this.address.city == null) || typeof this.address.city !== 'string') {
-    errors.push('City');
+    errors.push('Cidade');
   }
   if ((this.address.state == null) || typeof this.address.state !== 'string') {
-    errors.push('State');
+    errors.push('Estado');
   }
   if ((this.address.cep == null) || this.address.cep === '') {
     errors.push('CEP');
   }
   if ((this.value == null) || this.value === '') {
-    errors.push('Value');
+    errors.push('Valor do Imóvel');
   }
   return errors;
 };

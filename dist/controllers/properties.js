@@ -96,9 +96,8 @@ router.post('/import/csv', auth.isAuthenticated, upload.single('csv'), function(
   return csv.fromPath(req.file.path).validate(function(data, next) {
     var client, clientErrors, hasError, property, propertyErrors, search, type;
     hasError = false;
-    if (data[0] === 'codigo') {
+    if (data[0] === 'codigo' || data[0] === '') {
       next(null, false);
-      hasError = true;
       return false;
     }
     type = '';
@@ -161,8 +160,9 @@ router.post('/import/csv', auth.isAuthenticated, upload.single('csv'), function(
           client: client,
           property: property,
           error: {
-            message: 'Error on validate client: ' + clientErrors.join(', '),
-            code: 3
+            message: 'Error on validate client.',
+            fields: clientErrors.join(', '),
+            code: 5
           }
         });
         hasError = true;
@@ -177,8 +177,9 @@ router.post('/import/csv', auth.isAuthenticated, upload.single('csv'), function(
           client: client,
           property: property,
           error: {
-            message: 'Error on validate property: ' + propertyErrors.join(', '),
-            code: 3
+            message: 'Error on validate property.',
+            fields: propertyErrors.join(', '),
+            code: 6
           }
         });
         hasError = true;
@@ -215,7 +216,8 @@ router.post('/import/csv', auth.isAuthenticated, upload.single('csv'), function(
             property: property,
             error: {
               message: 'Error on find client',
-              code: 2
+              code: 2,
+              fields: err
             }
           });
           hasError = true;
@@ -243,7 +245,7 @@ router.post('/import/csv', auth.isAuthenticated, upload.single('csv'), function(
           if (points.length < 1 || (points[0] == null) || (points[0].latitude == null) || (((ref = points[0]) != null ? ref.longitude : void 0) == null)) {
             if (!hasError) {
               errors.push({
-                client: clientFound,
+                client: client,
                 property: property,
                 error: {
                   message: 'Error on find latitude and longitude property',
@@ -265,7 +267,8 @@ router.post('/import/csv', auth.isAuthenticated, upload.single('csv'), function(
                   property: property,
                   error: {
                     message: 'Error on save client',
-                    code: 2
+                    code: 2,
+                    fields: err
                   }
                 });
                 hasError = true;
@@ -282,7 +285,8 @@ router.post('/import/csv', auth.isAuthenticated, upload.single('csv'), function(
                     property: property,
                     error: {
                       message: 'Error on save property',
-                      code: 3
+                      code: 3,
+                      fields: err
                     }
                   });
                 }

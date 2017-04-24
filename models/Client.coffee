@@ -30,10 +30,14 @@ ClientSchema.methods.validateFields = () ->
   obj = this.toObject()
   errors = []
 
-  errors.push('Email') if not this.email? or typeof this.email isnt 'string'
-  errors.push('Name') if not this.name? or typeof this.name isnt 'string'
-  errors.push('Cellphone') if not this.phones.cell? or typeof this.phones.cell isnt 'string'
+  errors.push('Email') if not this.validateEmail() or typeof this.email isnt 'string'
+  errors.push('Nome') if not this.name? or this.name == '' or typeof this.name isnt 'string'
+  errors.push('Celular') if not this.phones.cell? or this.phones.cell == '' or typeof this.phones.cell isnt 'string'
 
   return errors
+
+ClientSchema.methods.validateEmail = () ->
+  re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  re.test(this.email)
 
 module.exports = mongoose.model 'Client', ClientSchema

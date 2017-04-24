@@ -113,15 +113,15 @@ PropertySchema.methods.validateFields = () ->
   obj = this.toObject()
   errors = []
 
-  errors.push('Code') if not this.code? or typeof this.code isnt 'string'
-  errors.push('Type') if not this.type? or typeof this.type isnt 'string'
-  errors.push('Street') if not this.address.street? or typeof this.address.street isnt 'string'
-  errors.push('Number') if not this.address.number? or typeof this.address.number isnt 'string'
-  errors.push('Neighborhood') if not this.address.neighborhood? or typeof this.address.neighborhood isnt 'string'
-  errors.push('City') if not this.address.city? or typeof this.address.city isnt 'string'
-  errors.push('State') if not this.address.state? or typeof this.address.state isnt 'string'
+  errors.push('Código') if not this.code? or typeof this.code isnt 'string'
+  errors.push('Tipo de Imóvel') if not this.type? or typeof this.type isnt 'string'
+  errors.push('Rua') if not this.address.street? or typeof this.address.street isnt 'string'
+  errors.push('Número (Endereço)') if not this.address.number? or typeof this.address.number isnt 'string'
+  errors.push('Bairro') if not this.address.neighborhood? or typeof this.address.neighborhood isnt 'string'
+  errors.push('Cidade') if not this.address.city? or typeof this.address.city isnt 'string'
+  errors.push('Estado') if not this.address.state? or typeof this.address.state isnt 'string'
   errors.push('CEP') if not this.address.cep? or this.address.cep == ''
-  errors.push('Value') if not this.value? or this.value == ''
+  errors.push('Valor do Imóvel') if not this.value? or this.value == ''
 
   return errors
 
