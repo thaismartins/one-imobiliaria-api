@@ -1,4 +1,4 @@
-var Group, User, auth, config, express, fs, multer, nodemailer, router, smtpTransport, upload, uploadPath;
+var Group, User, auth, config, express, fs, multer, nodemailer, path, router, smtpTransport, storage, upload;
 
 express = require('express');
 
@@ -12,12 +12,21 @@ Group = require('../models/UserGroup');
 
 fs = require('fs');
 
+path = require('path');
+
 multer = require('multer');
 
-uploadPath = './public/uploads/users';
+storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    return cb(null, './public/uploads/users');
+  },
+  filename: function(req, file, cb) {
+    return cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  }
+});
 
 upload = multer({
-  'dest': uploadPath
+  storage: storage
 });
 
 nodemailer = require('nodemailer');
@@ -75,6 +84,15 @@ router.get('/:id', auth.isAuthenticated, function(req, res) {
       return res["with"](userFound);
     }
     return res["with"](res.type.itemNotFound);
+  });
+});
+
+router.post('/photo', auth.isAuthenticated, upload.single('photo'), function(req, res) {
+  if (req.file == null) {
+    return res["with"](res.type.photoNotSended);
+  }
+  return res["with"]({
+    file: req.file.filename
   });
 });
 

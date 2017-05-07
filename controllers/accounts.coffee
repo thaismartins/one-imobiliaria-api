@@ -4,9 +4,14 @@ auth = require '../services/auth'
 User = require '../models/User'
 Group = require '../models/UserGroup'
 fs = require 'fs'
+path = require 'path'
 multer = require 'multer'
-uploadPath = './public/uploads/users'
-upload = multer({ 'dest': uploadPath })
+storage = multer.diskStorage
+  destination: (req, file, cb) ->
+    cb(null,  './public/uploads/users')
+  filename: (req, file, cb) ->
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+upload = multer({ storage: storage })
 nodemailer = require 'nodemailer'
 smtpTransport = require 'nodemailer-smtp-transport'
 config = require '../config'
@@ -39,6 +44,11 @@ router.get '/:id', auth.isAuthenticated, (req, res) ->
     return res.with(res.type.dbError, err) if err
     return res.with(userFound) if userFound
     res.with(res.type.itemNotFound)
+
+# ADD NEW PHOTO
+router.post '/photo', auth.isAuthenticated, upload.single('photo'), (req, res) ->
+  return res.with(res.type.photoNotSended) if not req.file?
+  return res.with({file: req.file.filename})
 
 # ADD NEW USER
 router.post '/', auth.isAuthenticated, (req, res) ->

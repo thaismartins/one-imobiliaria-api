@@ -92,6 +92,11 @@ module.exports =
       'code': 10,
       'status': 500,
       'success': false
+    'photoNotSended':
+      'text': 'Error any photo was sended',
+      'code': 11,
+      'status': 500,
+      'success': false
   with: (message, data) ->
     responseJson = {}
     if message?.text?
