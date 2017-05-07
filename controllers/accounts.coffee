@@ -13,7 +13,6 @@ storage = multer.diskStorage
     cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
 upload = multer({ storage: storage })
 nodemailer = require 'nodemailer'
-smtpTransport = require 'nodemailer-smtp-transport'
 config = require '../config'
 
 
@@ -30,7 +29,7 @@ router.post '/auth', (req, res) ->
   User.findOne(query).populate('group').exec (err, userFound) ->
     return res.with(res.type.itemNotFound) if not userFound?
     return res.with(res.type.wrongPassword) if !userFound.comparePassword(req.body.password)
-    res.with({'token': userFound.generateToken(), 'code': userFound._id, 'type': userFound.group.type, 'name': userFound.name})
+    res.with({'token': userFound.generateToken(), 'code': userFound._id, 'type': userFound.group.type, 'name': userFound.name, 'photo': userFound.photo})
 
 # GET ALL USERS
 router.get '/', auth.isAuthenticated, (req, res) ->

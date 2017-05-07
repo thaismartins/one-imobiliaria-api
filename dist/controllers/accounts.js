@@ -1,4 +1,4 @@
-var Group, User, auth, config, express, fs, multer, nodemailer, path, router, smtpTransport, storage, upload;
+var Group, User, auth, config, express, fs, multer, nodemailer, path, router, storage, upload;
 
 express = require('express');
 
@@ -31,8 +31,6 @@ upload = multer({
 
 nodemailer = require('nodemailer');
 
-smtpTransport = require('nodemailer-smtp-transport');
-
 config = require('../config');
 
 router.post('/auth', function(req, res) {
@@ -59,7 +57,8 @@ router.post('/auth', function(req, res) {
       'token': userFound.generateToken(),
       'code': userFound._id,
       'type': userFound.group.type,
-      'name': userFound.name
+      'name': userFound.name,
+      'photo': userFound.photo
     });
   });
 });
