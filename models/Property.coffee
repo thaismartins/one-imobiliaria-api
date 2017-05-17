@@ -13,11 +13,6 @@ setValue = (value) ->
 setOnlyNumbers = (value) ->
   return Number(value.toString().replace(/[^0-9]+/g, ""))
 
-setCEP = (value) ->
-  newValue = value.toString().replace(/[^0-9]+/g, "")
-  return '' if newValue == ''
-  return newValue.toString().slice(0, -3) + '-' + newValue.toString().slice(-3)
-
 PropertySchema = new Schema
   type: type: String, required: true, enum: ['house', 'apartment', 'car', 'land', 'others']
   code: type: String, required: true
@@ -29,7 +24,7 @@ PropertySchema = new Schema
     neighborhood: type: String, required: true
     city: type: String, required: true
     state: type: String, required: true
-    cep: type: String, required: true, set: setCEP
+    cep: type: String, required: true, set: setOnlyNumbers
     lat: type: String, required: true
     lng: type: String, required: true
   floor: type: Number, set: setOnlyNumbers
@@ -66,7 +61,7 @@ PropertySchema = new Schema
       neighborhood: type: String
       city: type: String
       state: type: String
-      cep: type: String, set: setCEP
+      cep: type: String, set: setOnlyNumbers
     value:
       min: type: Number, set: setValue
       max: type: Number, set: setValue
