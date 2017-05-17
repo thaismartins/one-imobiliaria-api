@@ -20,7 +20,7 @@ setCEP = (value) ->
 
 setState = (value) ->
   return '' if value.length != 2
-  value
+  value.toUpperCase()
 
 PropertySchema = new Schema
   type: type: String, required: true, enum: ['house', 'apartment', 'car', 'land', 'others']
@@ -114,7 +114,6 @@ PropertySchema.methods.forUpdate = () ->
 
 
 PropertySchema.methods.validateFields = () ->
-  obj = this.toObject()
   errors = []
 
   errors.push('Código') if not this.code? or typeof this.code isnt 'string'

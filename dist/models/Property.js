@@ -32,7 +32,7 @@ setState = function(value) {
   if (value.length !== 2) {
     return '';
   }
-  return value;
+  return value.toUpperCase();
 };
 
 PropertySchema = new Schema({
@@ -319,8 +319,7 @@ PropertySchema.methods.forUpdate = function() {
 };
 
 PropertySchema.methods.validateFields = function() {
-  var errors, obj;
-  obj = this.toObject();
+  var errors;
   errors = [];
   if ((this.code == null) || typeof this.code !== 'string') {
     errors.push('Código');
