@@ -13,6 +13,15 @@ setValue = (value) ->
 setOnlyNumbers = (value) ->
   return Number(value.toString().replace(/[^0-9]+/g, ""))
 
+setCEP = (value) ->
+  value = setOnlyNumbers(value).toString()
+  number = '00000000'
+  number.substring(0, number.length - value.length) + value
+
+setState = (value) ->
+  return '' if value.length != 2
+  value
+
 PropertySchema = new Schema
   type: type: String, required: true, enum: ['house', 'apartment', 'car', 'land', 'others']
   code: type: String, required: true
@@ -23,8 +32,8 @@ PropertySchema = new Schema
     complement: type: String
     neighborhood: type: String, required: true
     city: type: String, required: true
-    state: type: String, required: true
-    cep: type: String, required: true, set: setOnlyNumbers
+    state: type: String, required: true, set: setState
+    cep: type: String, required: true, set: setCEP
     lat: type: String, required: true
     lng: type: String, required: true
   floor: type: Number, set: setOnlyNumbers
@@ -60,8 +69,8 @@ PropertySchema = new Schema
       complement: type: String
       neighborhood: type: String
       city: type: String
-      state: type: String
-      cep: type: String, set: setOnlyNumbers
+      state: type: String, set: setState
+      cep: type: String, set: setCEP
     value:
       min: type: Number, set: setValue
       max: type: Number, set: setValue

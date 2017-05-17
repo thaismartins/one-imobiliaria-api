@@ -1,5 +1,5 @@
 'use strict';
-var PropertySchema, Schema, config, mongoose, setOnlyNumbers, setValue;
+var PropertySchema, Schema, config, mongoose, setCEP, setOnlyNumbers, setState, setValue;
 
 mongoose = require('mongoose');
 
@@ -19,6 +19,20 @@ setValue = function(value) {
 
 setOnlyNumbers = function(value) {
   return Number(value.toString().replace(/[^0-9]+/g, ""));
+};
+
+setCEP = function(value) {
+  var number;
+  value = setOnlyNumbers(value).toString();
+  number = '00000000';
+  return number.substring(0, number.length - value.length) + value;
+};
+
+setState = function(value) {
+  if (value.length !== 2) {
+    return '';
+  }
+  return value;
 };
 
 PropertySchema = new Schema({
@@ -58,12 +72,13 @@ PropertySchema = new Schema({
     },
     state: {
       type: String,
-      required: true
+      required: true,
+      set: setState
     },
     cep: {
       type: String,
       required: true,
-      set: setOnlyNumbers
+      set: setCEP
     },
     lat: {
       type: String,
@@ -186,11 +201,12 @@ PropertySchema = new Schema({
         type: String
       },
       state: {
-        type: String
+        type: String,
+        set: setState
       },
       cep: {
         type: String,
-        set: setOnlyNumbers
+        set: setCEP
       }
     },
     value: {
