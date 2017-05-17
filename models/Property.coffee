@@ -123,7 +123,7 @@ PropertySchema.methods.validateFields = () ->
   errors.push('Número (Endereço)') if not this.address.number? or typeof this.address.number isnt 'string'
   errors.push('Bairro') if not this.address.neighborhood? or typeof this.address.neighborhood isnt 'string'
   errors.push('Cidade') if not this.address.city? or typeof this.address.city isnt 'string'
-  errors.push('Estado') if not this.address.state? or typeof this.address.state isnt 'string'
+  errors.push('Estado') if not this.address.state? or typeof this.address.state isnt 'string' or this.address.state.length != 2
   errors.push('CEP') if not this.address.cep? or this.address.cep == ''
   errors.push('Valor do Imóvel') if not this.value? or this.value == ''
 

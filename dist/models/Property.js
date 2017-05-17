@@ -340,7 +340,7 @@ PropertySchema.methods.validateFields = function() {
   if ((this.address.city == null) || typeof this.address.city !== 'string') {
     errors.push('Cidade');
   }
-  if ((this.address.state == null) || typeof this.address.state !== 'string') {
+  if ((this.address.state == null) || typeof this.address.state !== 'string' || this.address.state.length !== 2) {
     errors.push('Estado');
   }
   if ((this.address.cep == null) || this.address.cep === '') {
