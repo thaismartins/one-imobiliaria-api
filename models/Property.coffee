@@ -53,7 +53,7 @@ PropertySchema = new Schema
   car: type: Boolean
   carValue: type: Number
   interest:
-    types: [type: String, enum: ['house', 'apartment', 'car', 'land', 'others']],
+    types: [type: String, enum: ['house', 'apartment', 'car', 'land', 'others', null]],
     meters:
       min: type: Number, set: setOnlyNumbers
       max: type: Number, set: setOnlyNumbers

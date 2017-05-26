@@ -151,7 +151,7 @@ PropertySchema = new Schema({
     types: [
       {
         type: String,
-        "enum": ['house', 'apartment', 'car', 'land', 'others']
+        "enum": ['house', 'apartment', 'car', 'land', 'others', null]
       }
     ],
     meters: {
