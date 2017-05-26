@@ -16,9 +16,6 @@ router.get '/', auth.isAuthenticated, (req, res) ->
   propertyQuery = property.generatePropertyQuery(reqQuery)
   interestQuery = property.generateInterestQuery(reqQuery)
 
-#  console.log(propertyQuery);
-#  console.log(interestQuery);
-
   Property.find propertyQuery, (err, propertiesFound) ->
     return res.with(res.type.dbError, err) if err
 

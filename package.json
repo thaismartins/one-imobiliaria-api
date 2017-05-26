@@ -46,6 +46,7 @@
     "path": "^0.12.7",
     "q": "^1.4.1",
     "socketio": "^1.0.0",
+    "url": "^0.11.0",
     "winston": "^2.2.0"
   },
   "devDependencies": {
