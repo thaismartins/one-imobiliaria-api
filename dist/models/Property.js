@@ -66,6 +66,9 @@ PropertySchema = new Schema({
       type: String,
       required: true
     },
+    condominium: {
+      type: String
+    },
     city: {
       type: String,
       required: true
@@ -195,6 +198,9 @@ PropertySchema = new Schema({
         type: String
       },
       neighborhood: {
+        type: String
+      },
+      condominium: {
         type: String
       },
       city: {

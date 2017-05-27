@@ -31,6 +31,7 @@ PropertySchema = new Schema
     number: type: String, required: true
     complement: type: String
     neighborhood: type: String, required: true
+    condominium: type: String
     city: type: String, required: true
     state: type: String, required: true, set: setState
     cep: type: String, required: true, set: setCEP
@@ -68,6 +69,7 @@ PropertySchema = new Schema
       number: type: String
       complement: type: String
       neighborhood: type: String
+      condominium: type: String
       city: type: String
       state: type: String, set: setState
       cep: type: String, set: setCEP
