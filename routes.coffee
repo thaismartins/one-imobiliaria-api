@@ -11,5 +11,6 @@ router.use '/cities', require './controllers/cities'
 router.use '/clients', require './controllers/clients'
 router.use '/properties/search', require './controllers/search'
 router.use '/properties', require './controllers/properties'
+router.use '/notifications', require './controllers/notifications'
 
 module.exports = router
