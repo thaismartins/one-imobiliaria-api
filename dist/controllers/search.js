@@ -20,11 +20,17 @@ router.get('/', auth.isAuthenticated, function(req, res) {
   property = new Property();
   propertyQuery = property.generatePropertyQuery(reqQuery);
   interestQuery = property.generateInterestQuery(reqQuery);
-  return Property.find(propertyQuery, function(err, propertiesFound) {
+  if (Object.keys(propertyQuery.interest).length === 0 && propertyQuery.interest.constructor === Object) {
+    propertyQuery = {};
+  }
+  if (Object.keys(interestQuery.interest).length === 0 && interestQuery.interest.constructor === Object) {
+    interestQuery = {};
+  }
+  return Property.find(propertyQuery).populate('client').exec(function(err, propertiesFound) {
     if (err) {
       return res["with"](res.type.dbError, err);
     }
-    return Property.find(interestQuery, function(err, propertiesInterestFound) {
+    return Property.find(interestQuery).populate('client').exec(function(err, propertiesInterestFound) {
       var i, j, len, len1, propertyInterest, results;
       if (err) {
         return res["with"](res.type.dbError, err);
@@ -34,10 +40,12 @@ router.get('/', auth.isAuthenticated, function(req, res) {
         property = propertiesFound[i];
         for (j = 0, len1 = propertiesInterestFound.length; j < len1; j++) {
           propertyInterest = propertiesInterestFound[j];
-          result.push({
-            property: property,
-            interest: propertyInterest
-          });
+          if (!property._id.equals(propertyInterest._id)) {
+            results.push({
+              property: property,
+              interest: propertyInterest
+            });
+          }
         }
       }
       return res["with"](results);

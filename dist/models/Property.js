@@ -66,6 +66,9 @@ PropertySchema = new Schema({
       type: String,
       required: true
     },
+    condominium: {
+      type: String
+    },
     city: {
       type: String,
       required: true
@@ -195,6 +198,9 @@ PropertySchema = new Schema({
         type: String
       },
       neighborhood: {
+        type: String
+      },
+      condominium: {
         type: String
       },
       city: {
@@ -354,7 +360,6 @@ PropertySchema.methods.validateFields = function() {
 PropertySchema.methods.generatePropertyQuery = function(reqQuery) {
   var newQuery, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7;
   newQuery = {};
-  newQuery.interest = {};
   if (reqQuery.property.type != null) {
     newQuery.type = {
       $or: reqQuery.property.type
@@ -439,6 +444,9 @@ PropertySchema.methods.generatePropertyQuery = function(reqQuery) {
   }
   if (reqQuery.property.carValue != null) {
     newQuery.carValue = reqQuery.property.carValue;
+  }
+  if (reqQuery.interest != null) {
+    newQuery.interest = {};
   }
   if (reqQuery.interest.type != null) {
     newQuery.interest.type = {
