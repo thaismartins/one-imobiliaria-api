@@ -47,20 +47,20 @@ router.post('/auth', function(req, res) {
     });
   }
   return User.findOne(query).populate('group').exec(function(err, userFound) {
+    var response;
     if (userFound == null) {
       return res["with"](res.type.itemNotFound);
     }
     if (!userFound.comparePassword(req.body.password)) {
       return res["with"](res.type.wrongPassword);
     }
-    console.log(userFound);
-    return res["with"]({
-      'token': userFound.generateToken(),
-      'code': userFound._id,
-      'type': userFound.group.type,
-      'name': userFound.name,
-      'photo': userFound.photo
-    });
+    response = {};
+    response.token = userFound.generateToken();
+    response.code = userFound._id;
+    response.type = userFound.group.type;
+    response.name = userFound.name;
+    response.photo = userFound.photo;
+    return res["with"](response);
   });
 });
 

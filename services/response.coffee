@@ -100,10 +100,12 @@ module.exports =
   with: (message, data) ->
     responseJson = {}
 
-    if message?
+    if message?.text?
       responseJson.message = message.text if message.text?
       responseJson.code = message.code if message.code?
       responseJson.success = message.success if message.success?
+    else
+      responseJson = message
 
     if data?
       responseJson.content = data

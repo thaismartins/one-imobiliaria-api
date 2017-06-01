@@ -119,7 +119,7 @@ module.exports = {
   "with": function(message, data) {
     var responseJson;
     responseJson = {};
-    if (message != null) {
+    if ((message != null ? message.text : void 0) != null) {
       if (message.text != null) {
         responseJson.message = message.text;
       }
@@ -129,6 +129,8 @@ module.exports = {
       if (message.success != null) {
         responseJson.success = message.success;
       }
+    } else {
+      responseJson = message;
     }
     if (data != null) {
       responseJson.content = data;
