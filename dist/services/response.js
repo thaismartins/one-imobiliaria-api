@@ -119,20 +119,22 @@ module.exports = {
   "with": function(message, data) {
     var responseJson;
     responseJson = {};
-    if ((message != null ? message.text : void 0) != null) {
-      responseJson.message = message.text;
-    }
-    if ((message != null ? message.code : void 0) != null) {
-      responseJson.code = message.code;
-    }
-    if ((message != null ? message.success : void 0) != null) {
-      responseJson.success = message.success;
+    if (message != null) {
+      if (message.text != null) {
+        responseJson.message = message.text;
+      }
+      if (message.code != null) {
+        responseJson.code = message.code;
+      }
+      if (message.success != null) {
+        responseJson.success = message.success;
+      }
     }
     if (data != null) {
       responseJson.content = data;
-    }
-    if ((message != null ? message.status : void 0) != null) {
-      this.status(message.status);
+      if ((message != null ? message.status : void 0) != null) {
+        this.status(message.status);
+      }
     }
     return this.json(responseJson);
   },
