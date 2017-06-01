@@ -121,14 +121,18 @@ module.exports = {
     responseJson = {};
     if ((message != null ? message.text : void 0) != null) {
       responseJson.message = message.text;
+    }
+    if ((message != null ? message.code : void 0) != null) {
       responseJson.code = message.code;
+    }
+    if ((message != null ? message.success : void 0) != null) {
       responseJson.success = message.success;
+    }
+    if (data) {
+      responseJson.content = data;
+    }
+    if ((message != null ? message.status : void 0) != null) {
       this.status(message.status);
-      if (data) {
-        responseJson.content = data;
-      }
-    } else {
-      responseJson = message;
     }
     return this.json(responseJson);
   },
