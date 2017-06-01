@@ -53,6 +53,7 @@ router.post('/auth', function(req, res) {
     if (!userFound.comparePassword(req.body.password)) {
       return res["with"](res.type.wrongPassword);
     }
+    console.log(userFound);
     return res["with"]({
       'token': userFound.generateToken(),
       'code': userFound._id,

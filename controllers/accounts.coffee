@@ -29,6 +29,7 @@ router.post '/auth', (req, res) ->
   User.findOne(query).populate('group').exec (err, userFound) ->
     return res.with(res.type.itemNotFound) if not userFound?
     return res.with(res.type.wrongPassword) if !userFound.comparePassword(req.body.password)
+    console.log(userFound);
     res.with({'token': userFound.generateToken(), 'code': userFound._id, 'type': userFound.group.type, 'name': userFound.name, 'photo': userFound.photo})
 
 # GET ALL USERS
