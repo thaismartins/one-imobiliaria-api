@@ -102,7 +102,7 @@ module.exports =
     responseJson.message = message.text if message?.text?
     responseJson.code = message.code if message?.code?
     responseJson.success = message.success if message?.success?
-    responseJson.content = data if data
+    responseJson.content = data if data?
 
     this.status(message.status) if message?.status?
     this.json(responseJson)

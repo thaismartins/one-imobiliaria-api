@@ -128,7 +128,7 @@ module.exports = {
     if ((message != null ? message.success : void 0) != null) {
       responseJson.success = message.success;
     }
-    if (data) {
+    if (data != null) {
       responseJson.content = data;
     }
     if ((message != null ? message.status : void 0) != null) {
