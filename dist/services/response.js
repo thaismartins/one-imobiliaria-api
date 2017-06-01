@@ -134,9 +134,9 @@ module.exports = {
     }
     if (data != null) {
       responseJson.content = data;
-      if ((message != null ? message.status : void 0) != null) {
-        this.status(message.status);
-      }
+    }
+    if ((message != null ? message.status : void 0) != null) {
+      this.status(message.status);
     }
     return this.json(responseJson);
   },

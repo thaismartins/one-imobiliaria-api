@@ -110,7 +110,7 @@ module.exports =
     if data?
       responseJson.content = data
 
-      this.status(message.status) if message?.status?
+    this.status(message.status) if message?.status?
     this.json(responseJson)
   factory: (req, res, next) ->
     res.type = response.messages
