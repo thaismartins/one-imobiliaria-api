@@ -23,7 +23,7 @@ setState = (value) ->
   value.toUpperCase()
 
 PropertySchema = new Schema
-  type: type: String, required: true, enum: ['house', 'apartment', 'car', 'land', 'others']
+  type: type: String, required: true, enum: ['house', 'apartment', 'car', 'land', 'others', null]
   code: type: String, required: true
   client: type: Schema.Types.ObjectId, ref: 'Client', required: true
   address:

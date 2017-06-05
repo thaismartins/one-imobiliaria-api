@@ -139,10 +139,5 @@ module.exports = {
       this.status(message.status);
     }
     return this.json(responseJson);
-  },
-  factory: function(req, res, next) {
-    res.type = response.messages;
-    res.message = response.response;
-    next();
   }
 };

@@ -112,8 +112,3 @@ module.exports =
 
     this.status(message.status) if message?.status?
     this.json(responseJson)
-  factory: (req, res, next) ->
-    res.type = response.messages
-    res.message = response.response
-    next()
-    return

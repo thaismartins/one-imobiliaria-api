@@ -39,7 +39,7 @@ PropertySchema = new Schema({
   type: {
     type: String,
     required: true,
-    "enum": ['house', 'apartment', 'car', 'land', 'others']
+    "enum": ['house', 'apartment', 'car', 'land', 'others', null]
   },
   code: {
     type: String,
