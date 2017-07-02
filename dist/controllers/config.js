@@ -1,4 +1,4 @@
-var City, Group, Promise, User, express, router, states, utils;
+var City, Client, Group, Promise, User, express, router, setOnlyNumbers, states, utils;
 
 express = require('express');
 
@@ -15,6 +15,12 @@ City = require('../models/City');
 User = require('../models/User');
 
 Group = require('../models/UserGroup');
+
+Client = require('../models/Client');
+
+setOnlyNumbers = function(value) {
+  return Number(value.toString().replace(/[^0-9]+/g, ""));
+};
 
 router.post('/cities', function(req, res) {
   var i, len, promises, state;
@@ -134,6 +140,62 @@ router.post('/users', function(req, res) {
       return res["with"]({
         success: true,
         message: 'All users created with success'
+      });
+    });
+  });
+});
+
+router.post('/clients/phones', function(req, res) {
+  return Client.find(function(err, clientsFound) {
+    var errors, promises, success;
+    if (err) {
+      return res["with"](res.type.dbError, err);
+    }
+    if (!clientsFound) {
+      return res["with"]({
+        success: true,
+        message: 'No clients found.'
+      });
+    }
+    promises = [];
+    errors = [];
+    success = 0;
+    clientsFound.forEach(function(client) {
+      var d;
+      if (client.phones != null) {
+        if (client.phones.cell) {
+          client.phones.cell = setOnlyNumbers(client.phones.cell);
+        }
+        if (client.phones.home) {
+          client.phones.home = setOnlyNumbers(client.phones.home);
+        }
+        if (client.phones.commercial) {
+          client.phones.commercial = setOnlyNumbers(client.phones.commercial);
+        }
+        d = Promise.defer();
+        Client.findOneAndUpdate({
+          _id: client._id
+        }, {
+          $set: client.withoutId()
+        }, {
+          "new": true,
+          upsert: true
+        }, function(err, clientUpdated) {
+          if (err) {
+            errors.push(clientUpdated);
+          } else {
+            success++;
+          }
+          return d.resolve();
+        });
+        return promises.push(d.promise);
+      }
+    });
+    return Promise.allSettled(promises).then(function(data) {
+      return res["with"]({
+        success: true,
+        message: success + ' client(s) phones updated with success and ' + errors.length + ' with errors.',
+        errors: errors
       });
     });
   });
