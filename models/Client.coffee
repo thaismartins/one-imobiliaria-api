@@ -4,13 +4,16 @@ mongoose = require 'mongoose'
 Schema = mongoose.Schema
 config = require '../config'
 
+setOnlyNumbers = (value) ->
+  return Number(value.toString().replace(/[^0-9]+/g, ""))
+
 ClientSchema = new Schema
   name: type: String, required: true
   email: type: String, unique: true, required: true
   phones:
-    cell: type: String, required: true
-    home: type: String
-    commercial: type: String
+    cell: type: String, required: true, set: setOnlyNumbers
+    home: type: String, set: setOnlyNumbers
+    commercial: type: String, set: setOnlyNumbers
   created: type: Date
   updated: type: Date, default: Date.now
 

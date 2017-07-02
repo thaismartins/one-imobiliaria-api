@@ -1,11 +1,15 @@
 'use strict';
-var ClientSchema, Schema, config, mongoose;
+var ClientSchema, Schema, config, mongoose, setOnlyNumbers;
 
 mongoose = require('mongoose');
 
 Schema = mongoose.Schema;
 
 config = require('../config');
+
+setOnlyNumbers = function(value) {
+  return Number(value.toString().replace(/[^0-9]+/g, ""));
+};
 
 ClientSchema = new Schema({
   name: {
@@ -20,13 +24,16 @@ ClientSchema = new Schema({
   phones: {
     cell: {
       type: String,
-      required: true
+      required: true,
+      set: setOnlyNumbers
     },
     home: {
-      type: String
+      type: String,
+      set: setOnlyNumbers
     },
     commercial: {
-      type: String
+      type: String,
+      set: setOnlyNumbers
     }
   },
   created: {
