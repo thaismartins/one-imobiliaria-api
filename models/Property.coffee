@@ -9,13 +9,15 @@ setValue = (value) ->
 
   return '' if finalValue == '.'
 
+  console.log('---------------');
+  console.log(finalValue);
   if value.indexOf('.') > -1 || value.indexOf(',') > -1
     newValue = value.toString().replace(/[^0-9]+/g, "")
     finalValue = newValue.toString().slice(0, -2) + '.' + newValue.toString().slice(-2)
   else
     newValue = value.toString().replace(/[^0-9]+/g, "")
     finalValue = newValue.toString() + '.00'
-
+  console.log(finalValue);
   return Number(finalValue)
 
 

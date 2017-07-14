@@ -13,6 +13,8 @@ setValue = function(value) {
   if (finalValue === '.') {
     return '';
   }
+  console.log('---------------');
+  console.log(finalValue);
   if (value.indexOf('.') > -1 || value.indexOf(',') > -1) {
     newValue = value.toString().replace(/[^0-9]+/g, "");
     finalValue = newValue.toString().slice(0, -2) + '.' + newValue.toString().slice(-2);
@@ -20,6 +22,7 @@ setValue = function(value) {
     newValue = value.toString().replace(/[^0-9]+/g, "");
     finalValue = newValue.toString() + '.00';
   }
+  console.log(finalValue);
   return Number(finalValue);
 };
 
