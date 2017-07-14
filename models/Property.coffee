@@ -5,10 +5,16 @@ Schema = mongoose.Schema
 config = require '../config'
 
 setValue = (value) ->
-  newValue = value.toString().replace(/[^0-9]+/g, "")
-  finalValue = newValue.toString().slice(0, -2) + '.' + newValue.toString().slice(-2)
+  finalValue = value
+
   return '' if finalValue == '.'
+
+  if value.indexOf('.') > -1 || value.indexOf(',') > -1
+    newValue = value.toString().replace(/[^0-9]+/g, "")
+    finalValue = newValue.toString().slice(0, -2) + '.' + newValue.toString().slice(-2)
+
   return Number(finalValue)
+
 
 setOnlyNumbers = (value) ->
   return Number(value.toString().replace(/[^0-9]+/g, ""))

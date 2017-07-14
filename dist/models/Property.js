@@ -9,10 +9,13 @@ config = require('../config');
 
 setValue = function(value) {
   var finalValue, newValue;
-  newValue = value.toString().replace(/[^0-9]+/g, "");
-  finalValue = newValue.toString().slice(0, -2) + '.' + newValue.toString().slice(-2);
+  finalValue = value;
   if (finalValue === '.') {
     return '';
+  }
+  if (value.indexOf('.') > -1 || value.indexOf(',') > -1) {
+    newValue = value.toString().replace(/[^0-9]+/g, "");
+    finalValue = newValue.toString().slice(0, -2) + '.' + newValue.toString().slice(-2);
   }
   return Number(finalValue);
 };
