@@ -333,6 +333,7 @@ router.put('/:id', auth.isAuthenticated, function(req, res) {
         return res["with"](res.type.itemNotFound);
       }
       property = new Property(req.body);
+      console.log(property);
       return Property.findOneAndUpdate({
         _id: req.params.id
       }, {
