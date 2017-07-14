@@ -16,6 +16,9 @@ setValue = function(value) {
   if (value.indexOf('.') > -1 || value.indexOf(',') > -1) {
     newValue = value.toString().replace(/[^0-9]+/g, "");
     finalValue = newValue.toString().slice(0, -2) + '.' + newValue.toString().slice(-2);
+  } else {
+    newValue = value.toString().replace(/[^0-9]+/g, "");
+    finalValue = newValue.toString() + '.00';
   }
   return Number(finalValue);
 };
