@@ -5,20 +5,17 @@ Schema = mongoose.Schema
 config = require '../config'
 
 setValue = (value) ->
-  finalValue = value
 
   return '' if finalValue == '.'
 
-  console.log('---------------');
-  console.log(finalValue);
-  if value.indexOf('.') > -1 || value.indexOf(',') > -1
+  if value.toString().indexOf('.') > -1 || value.toString().indexOf(',') > -1
     newValue = value.toString().replace(/[^0-9]+/g, "")
-    finalValue = newValue.toString().slice(0, -2) + '.' + newValue.toString().slice(-2)
+    finalValue = Number(newValue.toString().slice(0, -2) + '.' + newValue.toString().slice(-2))
   else
     newValue = value.toString().replace(/[^0-9]+/g, "")
-    finalValue = newValue.toString() + '.00'
-  console.log(finalValue);
-  return Number(finalValue)
+    finalValue = Number(newValue.toString() + '.00')
+
+  return finalValue
 
 
 setOnlyNumbers = (value) ->
@@ -400,6 +397,76 @@ PropertySchema.methods.generateInterestQuery = (reqQuery) ->
     newQuery.carValue = reqQuery.interest.carValue
 
   return newQuery
+
+
+
+PropertySchema.methods.setInterest = (interest) ->
+
+  if interest.type?
+    this.interest.type = interest.type
+
+  if interest.meters.min? and interest.meters.max?
+    this.interest.meters.min = interest.meters.min
+    this.interest.meters.max = interest.meters.max
+
+  if interest.vacancy.min? and interest.vacancy.max?
+    this.interest.vacancy.min = interest.vacancy.min
+    this.interest.vacancy.max = interest.vacancy.max
+
+  if interest.floor.min? and interest.floor.max?
+    this.interest.floor.min = interest.floor.min
+    this.interest.floor.max = interest.floor.max
+
+  if interest.address?
+    if interest.address.street?
+      this.interest.address.street = interest.address.street
+
+    if interest.address.number?
+      this.interest.address.number = interest.address.number
+
+    if interest.address.neighborhood?
+      this.interest.address.neighborhood = interest.address.neighborhood
+
+    if interest.address.city?
+      this.interest.address.city = interest.address.city
+
+  if interest.hasSubway? and interest.subwayStation?
+    this.interest.hasSubway = interest.hasSubway
+    this.interest.subwayStation = interest.subwayStation
+
+  if interest.value.min? and interest.value.max?
+    this.interest.value.min = interest.value.min
+    this.interest.value.max = interest.value.max
+
+  if interest.condominium.min? and interest.condominium.max?
+    this.interest.condominium.min = interest.condominium.min
+    this.interest.condominium.max = interest.condominium.max
+
+  if interest.iptu.min? and interest.iptu.max?
+    this.interest.iptu.min = interest.iptu.min
+    this.interest.iptu.max = interest.iptu.max
+
+  if interest.location.min? and interest.location.max?
+    this.interest.location.min = interest.location.min
+    this.interest.location.max = interest.location.max
+
+  if interest.payments?
+    this.interest.payments = interest.payments
+
+  if interest.exchange?
+    this.interest.exchange = interest.exchange
+
+  if interest.settled?
+    this.interest.settled = interest.settled
+
+  if interest.difference?
+    this.interest.difference = interest.difference
+
+  if interest.car?
+    this.interest.car = interest.car
+
+  if interest.carValue?
+    this.interest.carValue = interest.carValue
 
 
 module.exports = mongoose.model 'Property', PropertySchema

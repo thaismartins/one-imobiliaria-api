@@ -228,7 +228,6 @@ router.put '/:id', auth.isAuthenticated, (req, res) ->
       return res.with(res.type.itemNotFound) unless propertyFound?
 
       property = new Property(req.body)
-      console.log(property);
       Property.findOneAndUpdate({_id: req.params.id}, {$set: property.forUpdate()}, {new: true}).populate('client').exec (err, propertyUpdated) ->
         return res.with(res.type.dbError, err) if err
         res.with(propertyUpdated)

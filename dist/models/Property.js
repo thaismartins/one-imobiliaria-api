@@ -9,21 +9,17 @@ config = require('../config');
 
 setValue = function(value) {
   var finalValue, newValue;
-  finalValue = value;
   if (finalValue === '.') {
     return '';
   }
-  console.log('---------------');
-  console.log(finalValue);
-  if (value.indexOf('.') > -1 || value.indexOf(',') > -1) {
+  if (value.toString().indexOf('.') > -1 || value.toString().indexOf(',') > -1) {
     newValue = value.toString().replace(/[^0-9]+/g, "");
-    finalValue = newValue.toString().slice(0, -2) + '.' + newValue.toString().slice(-2);
+    finalValue = Number(newValue.toString().slice(0, -2) + '.' + newValue.toString().slice(-2));
   } else {
     newValue = value.toString().replace(/[^0-9]+/g, "");
-    finalValue = newValue.toString() + '.00';
+    finalValue = Number(newValue.toString() + '.00');
   }
-  console.log(finalValue);
-  return Number(finalValue);
+  return finalValue;
 };
 
 setOnlyNumbers = function(value) {
@@ -720,6 +716,76 @@ PropertySchema.methods.generateInterestQuery = function(reqQuery) {
     newQuery.carValue = reqQuery.interest.carValue;
   }
   return newQuery;
+};
+
+PropertySchema.methods.setInterest = function(interest) {
+  if (interest.type != null) {
+    this.interest.type = interest.type;
+  }
+  if ((interest.meters.min != null) && (interest.meters.max != null)) {
+    this.interest.meters.min = interest.meters.min;
+    this.interest.meters.max = interest.meters.max;
+  }
+  if ((interest.vacancy.min != null) && (interest.vacancy.max != null)) {
+    this.interest.vacancy.min = interest.vacancy.min;
+    this.interest.vacancy.max = interest.vacancy.max;
+  }
+  if ((interest.floor.min != null) && (interest.floor.max != null)) {
+    this.interest.floor.min = interest.floor.min;
+    this.interest.floor.max = interest.floor.max;
+  }
+  if (interest.address != null) {
+    if (interest.address.street != null) {
+      this.interest.address.street = interest.address.street;
+    }
+    if (interest.address.number != null) {
+      this.interest.address.number = interest.address.number;
+    }
+    if (interest.address.neighborhood != null) {
+      this.interest.address.neighborhood = interest.address.neighborhood;
+    }
+    if (interest.address.city != null) {
+      this.interest.address.city = interest.address.city;
+    }
+  }
+  if ((interest.hasSubway != null) && (interest.subwayStation != null)) {
+    this.interest.hasSubway = interest.hasSubway;
+    this.interest.subwayStation = interest.subwayStation;
+  }
+  if ((interest.value.min != null) && (interest.value.max != null)) {
+    this.interest.value.min = interest.value.min;
+    this.interest.value.max = interest.value.max;
+  }
+  if ((interest.condominium.min != null) && (interest.condominium.max != null)) {
+    this.interest.condominium.min = interest.condominium.min;
+    this.interest.condominium.max = interest.condominium.max;
+  }
+  if ((interest.iptu.min != null) && (interest.iptu.max != null)) {
+    this.interest.iptu.min = interest.iptu.min;
+    this.interest.iptu.max = interest.iptu.max;
+  }
+  if ((interest.location.min != null) && (interest.location.max != null)) {
+    this.interest.location.min = interest.location.min;
+    this.interest.location.max = interest.location.max;
+  }
+  if (interest.payments != null) {
+    this.interest.payments = interest.payments;
+  }
+  if (interest.exchange != null) {
+    this.interest.exchange = interest.exchange;
+  }
+  if (interest.settled != null) {
+    this.interest.settled = interest.settled;
+  }
+  if (interest.difference != null) {
+    this.interest.difference = interest.difference;
+  }
+  if (interest.car != null) {
+    this.interest.car = interest.car;
+  }
+  if (interest.carValue != null) {
+    return this.interest.carValue = interest.carValue;
+  }
 };
 
 module.exports = mongoose.model('Property', PropertySchema);
